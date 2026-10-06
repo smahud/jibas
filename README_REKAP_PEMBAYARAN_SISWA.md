@@ -2,6 +2,8 @@
 
 Fitur berada di **Keuangan → Penerimaan → Laporan → Rekap Pembayaran Siswa** dengan URL `http://localhost/jibas/keuangan/laprekappembayaran_siswa_main.php`. Implementasi ini menggantikan upgrade terdahulu menggunakan skema JIBAS yang diperiksa pada 6 Oktober 2026.
 
+**Dokumen ini adalah catatan utama patch dan serah-terima pekerjaan.** Seluruh perubahan fitur, keputusan teknis, hasil verifikasi, serta batas yang perlu diperhatikan agent/user berikutnya dicatat di sini. `README.md` root dan `keuangan/README.md` merupakan pengantar/pelengkap; membaca keduanya tidak menggantikan aturan fitur dalam dokumen ini. Jika implementasi berubah, perbarui dokumen ini pada commit perubahan yang sama.
+
 ## Penggunaan
 
 1. Login sebagai Manajer Keuangan atau administrator.
@@ -95,3 +97,214 @@ Fixture database menggunakan **CREATE TEMPORARY TABLE** yang hanya menutupi tabe
 Database lokal saat verifikasi memiliki skema yang sesuai, tetapi tabel siswa, tagihan, dan pembayaran kosong. Karena itu kecocokan dengan transaksi nyata sekolah serta penampilan cetak pada printer/browser pengguna masih perlu diperiksa setelah data tersedia. Pengujian fixture sudah meliputi dua jenjang keuangan walaupun kelas terakhir siswa berada di jenjang ketiga, cicilan tahun berikutnya, tunggakan tanpa angsuran, diskon, gratis, kelebihan bayar, jurnal hilang, dan NIS dengan nol awal.
 
 Lihat [analisis modul Keuangan](keuangan/README.md) untuk alur jurnal, hak akses, serta batas integrasi.
+
+## Riwayat patch dan kondisi repository
+
+| Acuan Git | Keterangan |
+|---|---|
+| `cfb71d1` | Import source awal, termasuk implementasi rekap terdahulu; berguna untuk analisis historis |
+| `42d68b5` | Penggabungan README repo tujuan dengan import proyek |
+| `ee63c0e` | Pembangunan ulang rekap, pemisahan model/query/renderer, XLSX asli, dokumentasi, dan pengujian |
+
+Patch `ee63c0e` sudah dikirim ke `main` pada repo `https://github.com/smahud/jibas`; commit penuh `ee63c0ec56131025a0db199782e25e9e12c34d03`. Pembaruan dokumentasi setelah commit tersebut dicatat oleh riwayat Git dokumen ini; nomor commit pembangunan ulang tetap menjadi acuan implementasi awal, bukan klaim bahwa itu selalu HEAD terbaru.
+
+File upgrade terdahulu dan beberapa README pernah dihapus dari working tree karena bermasalah. Kebutuhan fiturnya dibaca dari riwayat Git, kemudian source dibangun ulang. Penghapusan `.gitignore` dan contoh konfigurasi database juga dipulihkan. Tautan menu dikembalikan; isi akhirnya sama dengan tautan pada commit import, sehingga tidak perlu muncul sebagai perubahan tersendiri pada commit pembangunan ulang.
+
+Tidak ada migrasi database, penambahan kolom, pengubahan konfigurasi Apache/PHP permanen, atau perubahan alur penyimpanan pembayaran pada patch ini. Push pembangunan ulang dilakukan normal, tanpa force push. Untuk pekerjaan berikutnya, periksa `git status` dan `git log` aktual sebelum menyimpulkan keadaan repository.
+
+## Masalah versi lama dan keputusan penggantinya
+
+| Temuan yang relevan | Keputusan pada pembangunan ulang |
+|---|---|
+| Query memakai `tingkat.iddepartemen`, tetapi skema memiliki `tingkat.departemen` | Gunakan relasi akademik yang benar; pengelompokan keuangan mengikuti tahun buku/jenis penerimaan |
+| Riwayat pembayaran dihubungkan ke kelas siswa saat ini | Kelas terakhir hanya menjadi identitas; pembayaran lama tidak dipindahkan ke jenjang siswa sekarang |
+| Inner join angsuran pada penelusuran riwayat dapat menghilangkan tagihan yang belum dibayar | Ambil seluruh tagihan lebih dahulu, lalu hubungkan detail angsuran di model |
+| Pemanggilan `getDepartemen()` sebelum koneksi terbuka pernah menghasilkan error mysqli null | Bootstrap membuka koneksi melalui `RpDb()` sebelum query departemen/pencarian/laporan |
+| Nilai pembayaran wajib memakai tunai + diskon dalam satu angka | Tampilkan tunai dan diskon terpisah; total kas tidak memasukkan diskon |
+| Query dan hitungan tersebar pada halaman layar/cetak/ekspor/surat | Semua endpoint memakai loader dan model yang sama |
+| Rencana ekspor `.xls` dan pustaka legacy | Gunakan XLSX asli dengan ZipArchive; tidak mengubah pustaka ekspor laporan lain |
+| Pemeriksaan akses berdasarkan `ALL` saja tidak cukup menjelaskan peran | Izinkan hanya peran administrator/manajer pada setiap endpoint |
+
+Tabel ini menjelaskan source yang diperiksa, bukan daftar semua bug JIBAS. Jangan mengembalikan implementasi lama secara utuh hanya untuk mengambil layout atau satu fungsi.
+
+## Konteks modul yang perlu dipahami sebelum koreksi
+
+Modul Keuangan adalah PHP prosedural dengan database utama `jbsfina` dan relasi lintas database ke `jbsakad`, `jbsumum`, serta modul pengguna/pegawai. Halaman laporan lama lazim memakai keluarga file `*_main`, `*_header`, `*_content`, `*_cetak`, dan `*_excel`.
+
+| Lokasi source | Relevansi untuk analisis |
+|---|---|
+| `keuangan/penerimaan.php` | Menu pendataan, pembayaran wajib/sukarela, multi/batch payment, dan laporan penerimaan |
+| `keuangan/pembayaran_jtt.php`, `keuangan/penerimaan/inputbayar.func.php` | Pendataan kewajiban pada `besarjtt` beserta jurnalnya |
+| `keuangan/pembayaranjtt_add.php`, `keuangan/pembayaranjtt_edit.php` | Angsuran, diskon, pengubahan pembayaran, dan flag lunas |
+| `keuangan/library/jurnal.php` | `SimpanJurnal()` dan `SimpanDetailJurnal()`; memahami sumber header dan debit/kredit |
+| `keuangan/redirect.php` | Pembentukan sesi/peran setelah login |
+| `keuangan/include/sessioninfo.php` | Arti tingkat dan perilaku `getAccess()` legacy |
+| `keuangan/include/config.php` | Konfigurasi modul, patch JIBAS, database utama, dan pengubahan `$_REQUEST` |
+| `include/mainconfig.php`, `include/database.config.php` | Konfigurasi global dan koneksi lokal |
+| `keuangan/include/db_functions.php` | Koneksi global, transaksi legacy, dan penanganan/log error koneksi |
+| `akademik/` dan `jbsakad.riwayatkelassiswa` | Riwayat kelas dan identitas siswa; bukan sumber nominal pembayaran |
+
+Bagian lain seperti pengeluaran, buku besar, neraca, rugi laba, tutup buku, tabungan siswa/pegawai, inventori, `schoolpay/`, `onlinepay/`, dan `rinjani/` tetap memakai implementasinya masing-masing. Koreksi laporan rekap tidak otomatis memperbaiki atau menguji seluruh bagian tersebut.
+
+### Field `info*` mempunyai arti berbeda
+
+| Field | Makna pada alur yang diperiksa |
+|---|---|
+| `besarjtt.info1` | ID jurnal pendataan tagihan; tidak dijumlahkan sebagai diskon |
+| `besarjtt.info2` | ID tahun buku tagihan dalam varchar |
+| `penerimaanjtt.info1` | Nominal diskon angsuran dalam varchar |
+| `datapenerimaan.info1` | Kode rekening diskon pada alur jurnal; bukan nominal diskon |
+
+Jangan menyamakan arti field berdasarkan nama `info1` saja. Query tahun tagihan membandingkan `besarjtt.info2` dengan `CAST(tahunbuku.replid AS CHAR)` agar teks yang tidak sama persis tidak dianggap ID valid melalui konversi numerik longgar. Misalnya `1abc` tidak boleh diam-diam dianggap tahun buku `1`.
+
+## Peta fungsi dan alur eksekusi
+
+```text
+Endpoint (main/header/pilih/content/cetak/excel/surat)
+  -> rekappembayaran_bootstrap.php
+     -> sesi jbskeu + RpCanAccess()
+     -> include konfigurasi/database dalam buffer output
+     -> RpDb(): OpenDb sekali, charset utf8mb4, CloseDb saat shutdown
+  -> RpLoadRequestedReport(): validasi NIS dan status error HTTP
+     -> RpLoadReport(): transaksi read-only + consistent snapshot
+        -> RpReadReport(): siswa, tagihan, angsuran, sukarela
+        -> RpBuildReport(): kelompok, nominal, subtotal, status, can_certify
+  -> RpRenderReport() / RpWriteXlsx() / validasi surat
+```
+
+| Jika ingin mengoreksi | Fungsi / file utama |
+|---|---|
+| Peran yang diizinkan | `RpCanAccess()` pada model dan bootstrap; samakan uji peran dan dokumentasi |
+| Validasi panjang/jenis parameter | `RpText()`; input dibaca dari `$_GET` |
+| Pencarian NIS/nama/departemen | `RpSearchStudents()` pada data dan `RpRenderStudentSearch()` pada library pencarian |
+| Sumber tahun/departemen atau relasi transaksi | `RpReadReport()` pada data |
+| Tunai, diskon, sisa, gratis, kelebihan, atau status | `RpMoney()`, `RpBuildReport()`, `RpGroup()`, `RpAddTotals()` pada model |
+| Tampilan layar dan cetak | `RpRenderReport()`, `RpTotalsTable()`, `RpPaymentsTable()`, CSS khusus fitur |
+| Isi surat dan syarat penerbitan | `can_certify` pada model dan endpoint `..._surat_lunas.php` |
+| Isi dan format Excel | `RpExcelRows()`, `RpExcelTotals()`, `RpWriteXlsx()` dan endpoint ekspor |
+| Kop sekolah | `RpSchoolIdentity()` dan `RpRenderSchool()` |
+
+Struktur hasil model yang perlu dipertahankan atau diperbarui bersama seluruh konsumennya:
+
+- `student`: NIS, nama, kelas terakhir, aktif/alumni.
+- `groups`: kelompok departemen + ID tahun buku; masing-masing berisi `wajib`, `sukarela`, `totals`, `valid`, dan `status`.
+- `departments` dan `department_statuses`: subtotal dan status tiap departemen.
+- `totals`: `tagihan`, `tunai`, `diskon`, `sisa`, `kelebihan`, `sukarela`.
+- `issues`: masalah integritas yang menghalangi surat; nominal yang tidak terbaca tidak dimasukkan ke total.
+- `notes`: catatan, termasuk perbedaan flag lunas lama; tidak selalu menghalangi surat.
+- `charge_count`, `status`, `can_certify`: jumlah tagihan wajib, status global, dan keputusan surat.
+
+Keputusan surat harus tetap berasal dari model dan diverifikasi lagi di endpoint. Jangan membuat perhitungan kedua yang berbeda hanya di JavaScript, template cetak, atau ekspor.
+
+## Hak akses, parameter, dan respons HTTP
+
+Sesi Keuangan bernama `jbskeu`. `redirect.php` membentuk `namakeuangan`, `tingkatkeuangan`, dan akses departemen. Tingkat `0` adalah administrator/landlord, `1` manajer, `2` staf. Perilaku legacy `getAccess()` mengembalikan `ALL` untuk administrator/manajer; fitur baru memeriksa peran secara eksplisit.
+
+| Parameter GET | Batas / penggunaan |
+|---|---|
+| `nis` | Maksimal 20 karakter; laporan memerlukan NIS tidak kosong |
+| `nama` | Maksimal 100 karakter; pencarian tanpa NIS membutuhkan minimal 3 karakter |
+| `departemen` | Maksimal 50 karakter; kosong berarti semua departemen |
+| `page` | Angka nonnegatif, maksimal 6 karakter; indeks halaman dimulai dari 0 |
+| `cari` | Kehadirannya memicu pencarian |
+
+Input array, karakter kontrol, dan nilai yang melewati batas ditolak. Nama/NIS tetap teks, termasuk nol awal. Pencarian memakai prepared statements dan escape wildcard `LIKE`; output HTML di-escape, sedangkan teks Excel disimpan sebagai inline string. Respons pengguna sah memakai `Cache-Control: private, no-store` dan `X-Content-Type-Options: nosniff`.
+
+| Status HTTP | Arti |
+|---|---|
+| `200` | Halaman/hasil valid; validasi pencarian yang ditampilkan dalam formulir juga bisa tetap 200 |
+| `400` | Parameter laporan tidak valid atau NIS belum dipilih |
+| `401` | Belum memiliki sesi Keuangan |
+| `403` | Peran tidak diizinkan |
+| `404` | NIS laporan tidak ditemukan |
+| `409` | Surat tidak memenuhi syarat kelunasan/integritas |
+| `500` | Koneksi, query, identitas, atau ekspor gagal |
+
+## Contoh nominal untuk koreksi manual
+
+| Kasus | Hasil yang diharapkan |
+|---|---|
+| Tagihan 100.000, tunai 80.000, diskon 20.000 | Lunas; penerimaan kas wajib tetap 80.000 |
+| Tagihan 100.000 tanpa angsuran | Sisa 100.000 dan belum lunas; tetap muncul di laporan |
+| Tagihan A 100 dibayar 150; tagihan B 100 dibayar 50 | Sisa keseluruhan 50, kelebihan 50, belum lunas |
+| Tagihan tahun 2024 dibayar melalui jurnal 2025 | Kelompok tagihan tetap 2024, detail angsuran menampilkan tahun transaksi 2025 |
+| Sukarela 25 tahun 2025 dan 50 tahun 2026 | Subtotal per tahun 25/50, grand total sukarela 75 |
+| Hanya iuran sukarela atau tidak ada data keuangan | `BELUM ADA TAGIHAN`, surat tidak tersedia |
+| Tagihan nol dengan metadata valid | `GRATIS` pada item; dapat menjadi bagian kelunasan |
+| Flag lunas 1 tetapi sisa transaksi positif | Belum lunas dan diberi catatan perbedaan flag |
+| Nominal/jurnal/tahun buku tidak dapat diverifikasi | `PERLU VERIFIKASI`; jangan menerbitkan surat |
+
+## Diagnosis masalah
+
+| Gejala | Langkah pemeriksaan |
+|---|---|
+| Departemen/header gagal dimuat | Periksa koneksi lokal, izin SELECT `jbsakad.departemen`, dan bahwa `RpDb()` dipanggil sebelum query |
+| `Unknown column ... iddepartemen` | Pastikan endpoint memakai implementasi baru; periksa `SHOW COLUMNS FROM jbsakad.tingkat`, jangan menambah kolom untuk menyesuaikan query lama |
+| Riwayat jenjang lama tidak ditemukan | Cocokkan NIS pada siswa/tagihan; telusuri `besarjtt.info2`, tahun buku, jenis penerimaan, dan apakah NIS pernah berubah |
+| Tagihan belum dibayar hilang | Pastikan query tagihan tidak diberi inner join angsuran atau filter tanggal pembayaran |
+| Status lunas berbeda dari laporan lama | Hitung tunai dan diskon per tagihan; bandingkan flag tersimpan, sisa, dan kelebihan secara terpisah |
+| Hasil pencarian kosong | Periksa NIS tepat, gabungan syarat nama/NIS, filter departemen historis, dan ketersediaan data |
+| XLSX tidak dapat dibuka | Pastikan `zip` aktif, direktori sementara bisa ditulis, file dimulai signature ZIP `PK`, dan tidak ada warning/whitespace sebelum arsip |
+| Surat 409 | Baca `issues`, jumlah tagihan, dan sisa; jangan menghapus pengecekan endpoint untuk memaksa cetak |
+| Error `proc_open` pada test endpoint | Jalankan override CLI `-d disable_functions=` seperti contoh; jangan mengubah konfigurasi web permanen |
+| Karakter panah/tanda baca terlihat rusak di terminal Windows | Baca Markdown sebagai UTF-8, misalnya `Get-Content -Encoding UTF8`; jangan mengubah encoding source berdasarkan tampilan terminal ANSI |
+
+Loader laporan mencatat pesan generik beserta kode error melalui `error_log()` PHP; periksa tujuan log yang dikonfigurasi pada PHP/Apache. Penanganan koneksi/query legacy pada `keuangan/include/db_functions.php` juga dapat menulis `log/keuangan-error.log`. Log legacy bisa memuat SQL dan data pengguna, sehingga jangan menyalinnya mentah ke README atau commit.
+
+### Query pembanding yang hanya membaca data
+
+Gunakan pada database lokal/staging melalui klien SQL yang sah. Isi `@nis` dengan NIS yang memang hendak dianalisis; jangan mempublikasikan hasil yang berisi identitas/transaksi sekolah.
+
+```sql
+SET @nis = 'NIS_CONTOH';
+
+SELECT b.replid, b.info2 AS tahun_tagihan_id, tb.tahunbuku,
+       tb.departemen, d.nama, b.besar, b.lunas,
+       COALESCE(p.tunai, 0) AS tunai,
+       COALESCE(p.diskon, 0) AS diskon,
+       b.besar - COALESCE(p.tunai, 0) - COALESCE(p.diskon, 0) AS saldo
+FROM jbsfina.besarjtt b
+LEFT JOIN jbsfina.tahunbuku tb ON b.info2 = CAST(tb.replid AS CHAR)
+LEFT JOIN jbsfina.datapenerimaan d ON d.replid = b.idpenerimaan
+LEFT JOIN (
+    SELECT idbesarjtt, SUM(jumlah) AS tunai,
+           SUM(CAST(NULLIF(info1, '') AS DECIMAL(15, 0))) AS diskon
+    FROM jbsfina.penerimaanjtt GROUP BY idbesarjtt
+) p ON p.idbesarjtt = b.replid
+WHERE b.nis = @nis ORDER BY b.replid;
+
+SELECT p.replid, p.idbesarjtt, p.jumlah, p.info1 AS diskon_raw,
+       p.tanggal, j.nokas, j.idtahunbuku, tb.tahunbuku
+FROM jbsfina.penerimaanjtt p
+JOIN jbsfina.besarjtt b ON b.replid = p.idbesarjtt
+LEFT JOIN jbsfina.jurnal j ON j.replid = p.idjurnal
+LEFT JOIN jbsfina.tahunbuku tb ON tb.replid = j.idtahunbuku
+WHERE b.nis = @nis ORDER BY p.tanggal, p.replid;
+```
+
+Query agregat ini hanya pembanding untuk diskon yang sudah valid. SQL `CAST` bisa mengubah teks rusak menjadi nol/angka parsial; model PHP justru menandainya sebagai masalah. Periksa `diskon_raw` sebelum menyamakan hasil SQL dengan laporan. `saldo` negatif berarti kelebihan pada item tersebut, bukan izin menutup saldo positif item lain.
+
+## Batas yang belum boleh dianggap selesai
+
+- Basis data lokal pada verifikasi awal kosong untuk siswa/tagihan/pembayaran. Hasil 111 pemeriksaan adalah bukti model, fixture, endpoint, dan HTTP yang dijalankan, bukan bukti rekonsiliasi transaksi nyata.
+- Snapshot read-only menjaga konsistensi pembacaan pada tabel dengan engine transaksional yang mendukungnya. Tabel MyISAM/nontransaksional tidak mendapat jaminan snapshot InnoDB.
+- Jurnal angsuran/tahun transaksi dan metadata jenis/tagihan diperiksa, tetapi keseimbangan debit/kredit `jurnaldetail` dan jurnal pendataan `besarjtt.info1` tidak diaudit lengkap oleh fitur ini.
+- Pembayaran angsuran yang tidak lagi mempunyai baris `besarjtt` tidak dapat dipetakan ke NIS oleh loader saat ini. Audit transaksi orphan global adalah pekerjaan terpisah.
+- Relasi satu NIS tidak menyatukan NIS lama/baru atau siswa bernama sama. Nama bukan kunci untuk penggabungan transaksi.
+- Tidak mencakup tabungan, penerimaan calon siswa, seluruh gateway, tagihan yang belum didata, atau audit pembukuan keseluruhan.
+- Kop mengutamakan identitas departemen kelas terakhir, lalu identitas umum. Jika keduanya tidak ada, pemilihan dapat jatuh ke baris identitas pertama yang tersedia; bila tabel identitas kosong, renderer memakai nama `Sekolah`. Verifikasi kop sebelum memakai surat secara operasional.
+- Layout cetak A4, iframe responsif, dan workbook sudah diuji secara programatis; pratinjau visual pada browser/printer serta membuka file pada versi Excel/LibreOffice yang dipakai sekolah masih perlu dilakukan.
+- Laporan panjang memuat seluruh transaksi satu NIS. Pencarian dibatasi per halaman, tetapi laporan/Excel belum memakai streaming atau pagination transaksi; ukur penggunaan memori pada siswa dengan riwayat sangat besar sebelum memperluas skala.
+- PHP 64-bit, rupiah bulat, mysqlnd, dan ekstensi terkait adalah asumsi implementasi. Skema bernominal pecahan atau lingkungan berbeda memerlukan evaluasi ulang model/test.
+
+## Urutan kerja untuk agent/user berikutnya
+
+1. Baca dokumen ini, periksa diff/commit aktual, lalu identifikasi apakah masalah berada pada data, relasi, perhitungan, akses, atau tampilan.
+2. Reproduksi dengan NIS/data yang sah. Jika membagikan contoh, gunakan data anonim atau fixture, bukan kredensial/data siswa nyata.
+3. Cocokkan field dengan skema aktual dan source penyimpanan pembayaran. Hindari asumsi relasi atau arti `info*` berdasarkan namanya.
+4. Koreksi pada lapisan yang menjadi sumber masalah. Untuk aturan keuangan, perbarui model bersama pengujian kasusnya, bukan hanya angka/label di template.
+5. Jalankan pengujian yang relevan dari bagian Verifikasi dan PHP lint untuk file berubah. Jika aturan/status berubah, cek konsistensi layar, cetak, Excel, dan keputusan surat.
+6. Catat di dokumen ini: pemicu masalah, akar masalah, file/fungsi yang berubah, perilaku sesudah koreksi, pengujian yang benar-benar dijalankan, dan batas yang masih belum terverifikasi.
+7. Review `git diff --check` dan staged diff. Jangan ikutkan `include/database.config.php`, token, log, dump, atau hasil laporan berisi data sekolah. Commit/push sesuai instruksi pengguna dan riwayat repo aktual.
+
+Pemeriksaan hanya dokumentasi tidak memerlukan pengulangan seluruh test aplikasi. Namun angka hasil verifikasi tidak boleh dinaikkan atau diberi tanggal baru tanpa menjalankan pemeriksaan yang mendasarinya. Riwayat patch berikutnya sebaiknya menambahkan catatan bertanggal dan acuan commit tanpa menghapus batas pengujian sebelumnya.
