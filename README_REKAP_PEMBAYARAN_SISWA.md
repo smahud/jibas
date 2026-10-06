@@ -1,114 +1,97 @@
-# Rekap Pembayaran Siswa - Feature Documentation
+# Rekap Pembayaran Siswa — pembangunan ulang
 
-## Overview
-New report feature under **Penerimaan > Laporan** that displays complete payment history for a student across all departments they've attended (e.g., RA → MI → MTs).
+Fitur berada di **Keuangan → Penerimaan → Laporan → Rekap Pembayaran Siswa** dengan URL `http://localhost/jibas/keuangan/laprekappembayaran_siswa_main.php`. Implementasi ini menggantikan upgrade terdahulu menggunakan skema JIBAS yang diperiksa pada 6 Oktober 2026.
 
-## Files Added/Modified
+## Penggunaan
 
-### Modified Files
-| File | Change |
-|------|--------|
-| `keuangan/penerimaan.php` | Added menu link "Rekap Pembayaran Siswa" under Laporan section |
+1. Login sebagai Manajer Keuangan atau administrator.
+2. Pilih departemen pencarian atau biarkan **Semua departemen**.
+3. Isi NIS lengkap, atau nama minimal tiga karakter jika NIS kosong. Jika keduanya diisi, keduanya harus cocok.
+4. Klik nama siswa untuk melihat seluruh tagihan dan pembayaran dengan NIS itu.
+5. Gunakan **Refresh**, **Cetak Rekap**, **Excel**, atau **Surat Lunas** bila tersedia.
 
-### New Report Files (`keuangan/`)
-| File | Purpose |
-|------|---------|
-| `laprekappembayaran_siswa_main.php` | Main 3-frame layout (header + left panel + right panel) |
-| `laprekappembayaran_siswa_header.php` | Header with Departemen dropdown + access control |
-| `laprekappembayaran_siswa_pilih.php` | Left panel - loads search library |
-| `laprekappembayaran_siswa_blank.php` | Initial blank right panel |
-| `laprekappembayaran_siswa_content.php` | Main content - complete payment history |
-| `laprekappembayaran_siswa_cetak.php` | Print: Rekap Pembayaran Siswa |
-| `laprekappembayaran_siswa_surat_lunas.php` | Print: Surat Keterangan Lunas Tanggungan |
-| `laprekappembayaran_siswa_excel.php` | Excel export |
+Siswa aktif, nonaktif, dan alumni dapat dicari. NIS dicocokkan tepat, nama dicocokkan sebagian, dan hasil dibatasi 50 siswa per halaman dengan navigasi berikutnya/sebelumnya. Karakter `%`/`_` pada nama diperlakukan sebagai teks literal. Filter departemen mencakup kelas terakhir, riwayat kelas, serta departemen tagihan/pembayaran; filter ini tidak memotong isi laporan siswa yang sudah dipilih.
 
-### New Library File (`keuangan/library/`)
-| File | Purpose |
-|------|---------|
-| `cari_siswa_rekappembayaran.php` | Student search by NIS (exact) or Name (min 3 chars) |
+## Aturan data dan perhitungan
 
-## Features
+| Bagian | Aturan |
+|---|---|
+| Iuran wajib | Semua baris `besarjtt` untuk NIS, termasuk yang belum memiliki angsuran |
+| Departemen/tahun tagihan | `besarjtt.info2 → tahunbuku`; departemen diambil dari tahun buku, dengan jenis penerimaan sebagai fallback yang ditandai bila data tidak lengkap |
+| Angsuran wajib | Seluruh `penerimaanjtt` per `idbesarjtt`, terurut tanggal lalu ID |
+| Tahun angsuran | Ditampilkan dari jurnal; pembayaran tahun berikutnya tetap menyelesaikan tagihan tahun asal |
+| Tunai wajib | Jumlah `penerimaanjtt.jumlah` |
+| Diskon wajib | Jumlah `penerimaanjtt.info1`; kosong berarti nol, teks tidak valid ditandai |
+| Sisa per tagihan | `max(0, besar - tunai - diskon)` |
+| Kelebihan per tagihan | `max(0, tunai + diskon - besar)`; tidak menutup tagihan lain |
+| Sukarela | Dikelompokkan berdasarkan jenis penerimaan dan tahun buku jurnal; tidak memiliki target tagihan/status lunas |
+| Total penerimaan tunai | Tunai wajib + penerimaan sukarela; tidak memasukkan diskon |
+| Status | Dihitung dari transaksi, tidak sekadar mengikuti flag `besarjtt.lunas` |
 
-### 1. Access Control
-- Only accessible by **Manajer Keuangan** with "ALL" department access (`getAccess() == "ALL"`)
-- Other users see alert and are redirected to Penerimaan
+Setiap departemen dan tahun buku mempunyai subtotal dan status. Grand total menjumlahkan kelompok tanpa mengulang transaksi. Nominal dihitung sebagai integer rupiah untuk menghindari pembulatan float. Detail angsuran berisi tanggal, no. kas/jurnal, tahun buku transaksi, tunai, diskon, petugas, dan keterangan.
 
-### 2. Student Search (Left Panel)
-- Search by **NIS** (exact match) or **Nama** (partial, minimum 3 characters)
-- Departemen filter dropdown
-- Results show: NIS, Nama, Departemen, Tingkat, Kelas
+Departemen riwayat ditentukan oleh data keuangan, bukan kelas siswa saat ini. Kelas terakhir ditampilkan hanya sebagai identitas. Jenis penerimaan dan tahun buku nonaktif tetap tercakup dalam riwayat.
 
-### 3. Complete Payment History (Right Panel)
-Grouped by **Departemen → Tahun Buku**:
-- **Iuran Wajib (JTT)**: Per jenis pembayaran with detail angsuran
-- **Iuran Sukarela**: Per jenis pembayaran with detail angsuran
-- **Per item**: Besar bayaran, total dibayar, diskon, sisa, status LUNAS/BELUM LUNAS
-- **Per departemen**: Rekapitulasi subtotal + status keseluruhan
-- **Grand Total**: Keseluruhan semua departemen
+## Surat lunas
 
-### 4. Two Print Options
-| Button | Output |
-|--------|--------|
-| **Cetak Rekap** | Full payment history with grand totals, formatted for printing |
-| **Surat Lunas** | Official letter with school header, student info, per-dept breakdown, signature lines |
+Surat hanya dapat dibuat jika ada setidaknya satu tagihan wajib, seluruh sisa per tagihan nol, dan tidak ada masalah integritas yang dideteksi. Tagihan gratis (`besar=0`) diperhitungkan sebagai terselesaikan. Kelebihan bayar ditampilkan terpisah. Siswa tanpa tagihan atau hanya memiliki iuran sukarela tidak otomatis dinyatakan lunas.
 
-### 5. Excel Export
-Same data structure as print version in `.xls` format
+Data yang menghalangi surat antara lain tahun buku/jenis penerimaan hilang, jurnal angsuran hilang, nominal tidak valid/negatif, atau departemen jenis penerimaan tidak cocok dengan departemen tahun buku. Selisih flag lunas lama dari hasil hitungan ditampilkan sebagai catatan; laporan tidak mengubah flag tersebut.
 
-## Bug Fixes Applied
+Endpoint surat memuat ulang dan memvalidasi laporan. URL yang diakses langsung tetap menolak keadaan belum lunas/tidak terverifikasi dengan HTTP 409. Kop sekolah memakai identitas departemen kelas terakhir, lalu identitas umum bila tersedia, disertai ruang nomor surat dan tanda tangan.
 
-### Fix 1: Database Connection Order (Header & Pilih)
-**Problem**: `OpenDb()` called AFTER `getDepartemen()`, causing `mysqli_query(): Argument #1 ($mysql) must be of type mysqli, null given`
+Surat menyatakan kelunasan **tagihan yang sudah tercatat dengan NIS tersebut pada waktu laporan**, bukan kewajiban yang belum didata, NIS lain, atau audit seluruh pembukuan.
 
-**Files Fixed**:
-- `laprekappembayaran_siswa_header.php` - Moved `OpenDb()` before first `getDepartemen()`
-- `laprekappembayaran_siswa_pilih.php` - Added `OpenDb()` before `getDepartemen()` + `CloseDb()` after
+## Cetak dan Excel
 
-**Root Cause**: `getDepartemen()` in `library/departemen.php` calls `QueryDb()` which requires active DB connection
+Layar dan cetak memakai renderer/model yang sama. CSS cetak menyembunyikan tombol, mengulang header tabel, dan menggunakan ukuran A4. Cetak dilakukan melalui tombol agar pengguna dapat memilih printer atau menyimpan PDF.
 
-## Usage
+Ekspor sekarang **`.xlsx` asli**, menggantikan rencana `.xls` versi lama. File dibuat dengan ZipArchive dan XML Office Open XML tanpa PHPExcel. Nominal merupakan sel numerik; NIS dan teks merupakan inline strings sehingga nol awal NIS tetap ada dan teks yang diawali `=` tidak berubah menjadi formula. Ekspor mencakup rincian, subtotal tahun/departemen, status, catatan integritas, dan grand total.
 
-### Access URL
+File XLSX dibuat di direktori sementara server dan dihapus setelah dikirim. Tidak ada file hasil laporan atau data sekolah yang perlu disimpan dalam repository.
+
+## Struktur file
+
+| File | Tanggung jawab |
+|---|---|
+| `keuangan/laprekappembayaran_siswa_main.php` | Layout header, pencarian, dan laporan |
+| `..._header.php`, `..._pilih.php`, `..._blank.php` | Filter departemen, pencarian, keadaan awal |
+| `..._content.php` | Laporan dan tombol aksi |
+| `..._cetak.php`, `..._surat_lunas.php`, `..._excel.php` | Cetak rekap, surat dengan validasi ulang, unduhan XLSX |
+| `keuangan/library/cari_siswa_rekappembayaran.php` | Pencarian dan navigasi hasil; akses langsung tetap dilindungi |
+| `keuangan/library/rekappembayaran_bootstrap.php` | Sesi, peran, konfigurasi, koneksi, penanganan error endpoint |
+| `keuangan/library/rekappembayaran_data.php` | Prepared statements dan snapshot read-only; empat query utama per laporan |
+| `keuangan/library/rekappembayaran_model.php` | Perhitungan dan keputusan status/surat |
+| `keuangan/library/rekappembayaran_view.php` | Escape output dan renderer layar/cetak bersama |
+| `keuangan/library/rekappembayaran_excel.php` | Ekspor XLSX bertipe |
+| `keuangan/style/rekappembayaran.css` | Layout, tabel, dan aturan cetak khusus fitur |
+| `keuangan/penerimaan.php` | Tautan menu laporan |
+
+Nama endpoint lama dipertahankan, tetapi implementasinya dibangun ulang. Query memakai skema `jbsakad`, `jbsfina`, dan `jbsumum` yang sudah ada; tidak memerlukan tabel/kolom baru.
+
+## Verifikasi
+
+Jalankan dari root proyek dengan PHP CLI yang memakai konfigurasi lokal:
+
+```powershell
+php tests/rekappembayaran_test.php
+php tests/rekappembayaran_database_test.php
+php -d disable_functions= tests/rekappembayaran_endpoint_test.php
+php tests/rekappembayaran_http_test.php
 ```
-http://localhost/jibas/keuangan/laprekappembayaran_siswa_main.php
-```
-Or via menu: **Keuangan → Penerimaan → Laporan → Rekap Pembayaran Siswa**
 
-### Steps
-1. Select **Departemen** (default: first accessible)
-2. Enter **NIS** or **Nama Siswa** (min 3 chars) → Click **Cari**
-3. Click student row in left panel
-4. View complete payment history in right panel
-5. Use buttons: **Refresh**, **Cetak Rekap**, **Surat Lunas**, **Excel**
+Jika PHP tidak berada di PATH, gunakan `C:\YIM\JIBAS\xampp\php\php.exe`. Override `disable_functions` hanya berlaku pada proses CLI pengujian endpoint yang membutuhkan `proc_open`; tidak perlu mengubah php.ini atau konfigurasi Apache.
 
-## Naming Convention Compliance
-Follows existing JIBAS patterns:
-- Reports: `laprekappembayaran_siswa_*` (like `lapbayarsiswa_all_*`, `laprekap_*`)
-- Search library: `cari_siswa_rekappembayaran.php` (like `cari_siswa.php`, `cari_calonsiswa.php`)
+| Pengujian yang dijalankan | Hasil |
+|---|---|
+| Model, hak akses, nominal, XSS, struktur XLSX dan teks formula | 39 pemeriksaan lolos |
+| Query dengan fixture lintas departemen/tahun dan alumni | 24 pemeriksaan lolos |
+| Endpoint asli dengan fixture terisolasi: layar, cetak, surat, Excel, pencarian | 18 pemeriksaan lolos |
+| HTTP Apache: sesi, staf, manajer, parameter dan keadaan kosong | 30 pemeriksaan lolos |
+| PHP lint file fitur | Lolos pada PHP 8.2.30 |
 
-## Database Tables Used
-- `jbsakad.siswa` - Student data
-- `jbsakad.kelas`, `jbsakad.tingkat`, `jbsakad.departemen` - Academic structure
-- `besarjtt`, `penerimaanjtt` - Iuran Wajib
-- `penerimaaniuran` - Iuran Sukarela
-- `datapenerimaan` - Payment types
-- `jurnal`, `tahunbuku` - Journal & academic year
-- `jbsumum.identitas` - School identity (for print headers)
+Fixture database menggunakan **CREATE TEMPORARY TABLE** yang hanya menutupi tabel asli pada koneksi pengujian itu. Tidak ada penulisan fixture ke tabel permanen. Akun pengujian database memerlukan izin membuat temporary table. Uji HTTP memakai sesi acak sementara yang dihapus setelah pemeriksaan, dan mengakses Apache lokal pada `http://localhost/jibas/keuangan/`.
 
-## Testing Checklist
-- [ ] Menu appears under Penerimaan > Laporan
-- [ ] Access denied for non-Manajer Keuangan users
-- [ ] Departemen dropdown loads correctly
-- [ ] Search by NIS works (exact match)
-- [ ] Search by Name works (min 3 chars)
-- [ ] Student selection loads payment history
-- [ ] History grouped by Departemen → Tahun Buku
-- [ ] Iuran Wajib & Sukarela both display
-- [ ] Per-installment detail visible
-- [ ] LUNAS/BELUM LUNAS status correct
-- [ ] Per-department subtotals correct
-- [ ] Grand totals correct
-- [ ] Cetak Rekap opens and prints
-- [ ] Surat Lunas opens with school header
-- [ ] Excel export downloads .xls file
-- [ ] No PHP errors in logs
+Database lokal saat verifikasi memiliki skema yang sesuai, tetapi tabel siswa, tagihan, dan pembayaran kosong. Karena itu kecocokan dengan transaksi nyata sekolah serta penampilan cetak pada printer/browser pengguna masih perlu diperiksa setelah data tersedia. Pengujian fixture sudah meliputi dua jenjang keuangan walaupun kelas terakhir siswa berada di jenjang ketiga, cicilan tahun berikutnya, tunggakan tanpa angsuran, diskon, gratis, kelebihan bayar, jurnal hilang, dan NIS dengan nol awal.
+
+Lihat [analisis modul Keuangan](keuangan/README.md) untuk alur jurnal, hak akses, serta batas integrasi.

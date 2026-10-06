@@ -1,0 +1,53 @@
+/* Tampilan khusus laporan; tidak mengubah style modul lain. */
+* { box-sizing: border-box; }
+body { font: 13px/1.5 Arial, sans-serif; color: #242424; background: #fff; margin: 18px; }
+h1 { font-size: 22px; color: #900; margin: 0 0 12px; }
+h2 { font-size: 18px; margin: 22px 0 12px; }
+h3 { font-size: 15px; background: #eef3e2; padding: 8px; }
+h4 { font-size: 14px; margin: 0 0 10px; }
+small, .muted { color: #626262; }
+p { margin: 8px 0; }
+a { color: #07558c; }
+button, .button { font: inherit; display: inline-block; background: #f1f4ec; border: 1px solid #8d9b76; color: #25341a; border-radius: 3px; padding: 6px 12px; text-decoration: none; cursor: pointer; }
+button:disabled { cursor: default; color: #777; border-color: #ccc; }
+input, select { font: inherit; padding: 5px; max-width: 100%; }
+label { display: block; margin: 10px 0; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.notice { background: #fff6da; border-left: 4px solid #d5a635; padding: 10px 14px; margin: 12px 0; }
+.error { background: #fff0ef; border-color: #b2352b; }
+.table-scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0 18px; }
+caption { text-align: left; font-weight: bold; padding: 5px 0; }
+td, th { border: 1px solid #b9c1af; padding: 7px 9px; text-align: left; vertical-align: top; }
+thead th { background: #edf2e3; }
+tbody th { width: 65%; font-weight: normal; }
+.money { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.summary { max-width: 620px; }
+article { border-top: 1px solid #ddd; padding: 14px 0; }
+.school { border-bottom: 2px solid #333; text-align: center; padding-bottom: 12px; }
+.school h2 { margin-top: 0; }
+.signature { display: flex; justify-content: space-between; gap: 40px; margin-top: 35px; }
+.signature div { width: 45%; }
+.signature .line { margin-top: 65px; border-top: 1px solid #333; }
+.shell { margin: 0; height: 100vh; display: flex; flex-direction: column; }
+.shell iframe { border: 0; width: 100%; }
+.shell .header-frame { height: 130px; flex-shrink: 0; border-bottom: 1px solid #bbb; }
+.panels { flex: 1; min-height: 0; display: flex; }
+.panels .search-frame { width: 360px; flex-shrink: 0; border-right: 1px solid #bbb; }
+.panels .report-frame { flex: 1; min-width: 0; height: 100%; }
+@media (max-width: 700px) {
+    .panels { flex-direction: column; overflow: auto; }
+    .panels .search-frame { width: 100%; min-height: 360px; border-bottom: 1px solid #bbb; }
+    .panels .report-frame { min-height: 650px; flex-shrink: 0; }
+}
+@media print {
+    body { margin: 0; font-size: 10pt; }
+    .no-print { display: none !important; }
+    .table-scroll { overflow: visible; }
+    th, td { padding: 4px; border-color: #888; }
+    thead { display: table-header-group; }
+    tr, .signature, .school { break-inside: avoid; }
+    h2, h3, h4, caption { break-after: avoid; }
+    .summary { max-width: 100%; }
+    @page { size: A4; margin: 15mm; }
+}
