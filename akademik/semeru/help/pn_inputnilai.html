@@ -1,0 +1,65 @@
+<html>
+<head>
+    <title>Pendataan Nilai</title>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link href="../images/jibas.ico" rel="shortcut icon" />
+    <link rel="stylesheet" type="text/css" href="../style/style.css?<?=filemtime('../style/style.css')?>">
+    <script>
+        document.addEventListener('keydown', function(event) 
+        {
+            if (event.key === 'Escape') 
+                window.close(); 
+        });
+    </script>
+</head>
+<body style="padding: 20px">
+
+<p class="help-title">Pendataan Nilai</p>
+
+<p class="help-content">
+    Bagian ini digunakan untuk melakukan pendataan nilai harian siswa, seperti Tugas, Ulangan Harian, kuis dan Ulangan Tengah Semester (UTS), 
+    Ulangan Akhir Semester (UAS) atau penilaian akhir tahun (PAT).
+</p>
+
+<p class="help-content">
+    Sebelum melakukan pendataan nilai, pastikan beberapa hal berikut:
+</p>
+
+<ol class="help-content">
+    <li><b>Pelajaran dan Guru</b>: pastikan telah mendata pelajaran dan guru di menu Guru &amp; Pelajaran</li>
+    <li>
+        <b>Jenis Pengujian</b>: pastikan telah mendata jenis pengujian di menu menu Guru &amp; Pelajaran.
+        Jenis pengujian adalah jenis-jenis pengujian yang dilakukan guru untuk penilaian siswa, contohnya: 
+        Tugas, Ulangan Harian, Kuis, Ulangan Tengah Semester (UTS), Ulangan Akhir Semester (UAS) atau penilaian akhir tahun (PAT).
+    </li>
+</ol>
+
+<p class="help-content">
+    Aplikasi akan otomatis menghitung nilai <b>Rata-rata Kelas</b> dan <b>Rata-rata per Siswa</b> untuk setiap data nilai yang diisikan.
+</p>    
+
+<p class="help-content">
+    Setelah pendataan nilai harian, selanjutnya pengguna dapat menghitung <b>Nilai Akhir Jenis Pengujian</b>.
+    <b>Nilai Akhir Jenis Pengujian</b> akan digunakan untuk menghitung nilai rapor siswa.
+</p>    
+
+<p class="help-content">
+    Ada 2 cara untuk menghitung nilai akhir:
+    <ol class="help-content">
+        <li><b>Otomatis</b>, pengguna memilih nilai ujian yang akan dihitung sebagai nilai akhir.
+            Guru bisa memilih semua nilai ujian atau hanya beberapa nilai ujian tertentu sesuai kebijakan guru.
+            Guru juga bisa menentukan pembobotan dari setiap nilai ujian, supaya bila ada nilai ujian yang lebih dominan, 
+            maka akan memiliki pengaruh lebih besar dalam perhitungan nilai akhir.
+            Untuk perhitungan nilai akhir, akan dihitung secara otomatis berdasarkan bobot dari setiap nilai ujian yang dipilih.
+        </li>
+        <li><b>Manual</b>, pengguna memasukkan nilai akhir secara manual. Hal ini bertujuan apabila pengguna ingin memberikan nilai akhir 
+            yang tidak berdasarkan perhitungan nilai ujian, misalnya berdasarkan penilaian observasi atau aspek lain yang tidak 
+            tertampung dalam nilai ujian.</li>
+    </ol>
+</p>    
+
+</body>
+</html>
+

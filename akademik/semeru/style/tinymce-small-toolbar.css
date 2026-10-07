@@ -1,0 +1,15 @@
+/* Shrink toolbar height and button padding */
+.tox .tox-toolbar__group {
+    padding: 0 1px !important;
+}
+
+.tox .tox-tbtn {
+    height: 24px !important;
+    width: 24px !important;
+    min-width: 24px !important;
+}
+
+/* Downscale the default SVG icons to 75% */
+.tox .tox-tbtn svg {
+    transform: scale(0.75) !important;
+}

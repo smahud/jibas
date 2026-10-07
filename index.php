@@ -3,7 +3,7 @@
  * JIBAS Education Community
  * Jaringan Informasi Bersama Antar Sekolah
  * 
- * @version: 35.5 (August 10, 2026)
+ * @version: 36.0 (Oct 07, 2026)
  * @notes: 
  * 
  * Copyright (C) 2024 JIBAS (http://www.jibas.net)
@@ -110,10 +110,10 @@ if ($dbconnect)
 	<table border="0" cellpadding="0" cellspacing="0">
 	<tr>
         <td align="center" width="140">
-            <a href="akademik/index.php">
-                <img id="btAkademik" src="images/btnmenu_green_p_03.png"  style="width: 120px"
-                     onMouseOver="changeImage('btAkademik','images/btnmenu_green_a_03.png')"
-                     onMouseOut="changeImage('btAkademik','images/btnmenu_green_p_03.png')" border="0">
+            <a href="akademik/semeru/index.php">
+                <img id="btAkademik" src="images/btnmenu_green_p_36.png"  style="width: 120px"
+                     onMouseOver="changeImage('btAkademik','images/btnmenu_green_a_36.png')"
+                     onMouseOut="changeImage('btAkademik','images/btnmenu_green_p_36.png')" border="0">
             </a>
         </td>
         <td align="center" width="140">

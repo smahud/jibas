@@ -1,0 +1,248 @@
+var helpBox = null;
+
+$(document).ready(function() 
+{
+    helpBox = new DialogBox("#divHelpDialog", 600, 500);
+
+    applyTables();
+});
+
+function applyTables()
+{
+    if ($("#tableMutasi").length)
+        Tables("tableMutasi", 1, 0);
+}
+
+function onPrevPage()
+{
+    let page = parseInt($("#page").val());
+    if (page === 1)
+        return;
+
+    $("#page").val(page - 1);
+    onChangePage();    
+}
+
+function onNextPage()
+{
+    let page = parseInt($("#page").val());
+    let npage = parseInt($("#npage").val());
+
+    if (page === npage)
+        return;
+
+    $("#page").val(page + 1);
+    onChangePage();
+}
+
+function onChangePage()
+{
+    let page = $("#page").val();
+    fetchDaftarMutasi(page);
+}
+
+function fetchDaftarMutasi(page)
+{
+    let qsb = new QsBuilder();
+    qsb.add("op", "daftarmutasi");
+    qsb.add("page", page);
+    qsb.addInput("urut", "urut");
+    qsb.addInput("departemen", "departemen");
+    qsb.addInput("tahunmutasi", "tahunmutasi");
+    qsb.addInput("idjenismutasi", "jenismutasi");
+
+    let dvTableContent = $("#dvTableContent");
+    dvTableContent.html("memuat ..");
+    
+    $.ajax({
+        url: "daftarmutasi.ajax.php",
+        method: "POST",
+        data: qsb.createQs(),
+        success: function(data)
+        {
+            dvTableContent.html(data).hide().fadeIn(300);
+
+            applyTables();
+
+            $("html, body").scrollTop($(document).height());
+        },
+        error: function(xhr)
+        {
+            alert(xhr.responseText);
+        }
+    })
+}
+
+function fetchPageControl()
+{
+    let qsb = new QsBuilder();
+    qsb.add("op", "pagecontrol");
+    qsb.addInput("departemen", "departemen");
+    qsb.addInput("tahunmutasi", "tahunmutasi");
+    qsb.addInput("idjenismutasi", "jenismutasi");
+
+    let dvPageControl = $("#dvPageControl");
+    dvPageControl.html("memuat ..");
+    
+    $.ajax({
+        url: "daftarmutasi.ajax.php",
+        method: "POST",
+        data: qsb.createQs(),
+        success: function(data)
+        {
+            dvPageControl.html(data).hide().fadeIn(300);
+        },
+        error: function(xhr)
+        {
+            alert(xhr.responseText);
+        }
+    })
+}
+
+function batalMutasi(idMutasi, nis, nama)
+{
+     if (!confirm("BATALKAN MUTASI SISWA " + nama + " (" + nis + ")?"))
+        return;
+
+    let qsb = new QsBuilder();
+    qsb.add("op", "batalmutasi");
+    qsb.add("idmutasi", idMutasi);
+        
+    $.ajax({
+        url: "daftarmutasi.ajax.php",
+        method: "POST",
+        data: qsb.createQs(),
+        success: function(json)
+        {
+            let lsResp = JSON.parse(json);
+            if (parseInt(lsResp[0]) < 0)
+            {
+                alert(lsResp[1]);
+                return;
+            }
+
+            onChangePage();
+        },
+        error: function(xhr)
+        {
+            alert(xhr.responseText);
+        }
+    })
+}
+
+function onChangeUrut(urut)
+{
+    $("#urut").val(urut);
+    fetchDaftarMutasi(1);
+}
+
+function onChangeJenisMutasi()
+{
+    onChangeTahunMutasi();
+}
+
+function onChangeTahunMutasi()
+{
+    fetchDaftarMutasi(1);
+
+    setTimeout(() => {
+        fetchPageControl();
+    }, 100);
+}
+
+function onChangeDepartemen()
+{
+    $("#dvTableContent").html("");
+    $("#dvPageControl").html("");
+
+    function acceptTahunMutasi()
+    {
+        fetchDaftarMutasi(1);
+
+        setTimeout(() => {
+            fetchPageControl();
+        }, 100);
+    }
+
+    fetchTahunMutasi(acceptTahunMutasi);
+}
+
+function fetchTahunMutasi(callback)
+{
+    let qsb = new QsBuilder();
+    qsb.add("op", "tahunmutasi");
+    qsb.addInput("departemen", "departemen");
+
+    let spTahunMutasi = $("#spTahunMutasi");
+    spTahunMutasi.html("memuat ..");
+    
+    $.ajax({
+        url: "daftarmutasi.ajax.php",
+        method: "POST",
+        data: qsb.createQs(),
+        success: function(data)
+        {
+            spTahunMutasi.html(data).hide().fadeIn(300);
+            
+            if (typeof(callback) !== "undefined")
+                callback();
+        },
+        error: function(xhr)
+        {
+            alert(xhr.responseText);
+        }
+    })
+}
+
+function detailSiswa(nis) 
+{
+    let qsb = new QsBuilder()
+    qsb.add('nis', nis)
+
+	newWindow('../../siswa/siswa.detail.php?'+qsb.createQs(), 'DetailSiswa','790','650','resizable=1,scrollbars=1,status=0,toolbar=0')
+}
+
+function refresh()
+{
+    document.location.reload();
+}
+
+function cetak()
+{
+    let qsb = new QsBuilder();
+    qsb.addInput("departemen", "departemen");
+    qsb.addInput("tahunmutasi", "tahunmutasi");
+    qsb.add("jenismutasi", $("#jenismutasi option:selected").text());
+
+    let addr = "daftarmutasi.cetak.php?" + qsb.createQs();
+    newWindow(addr, 'CetakDaftarMutasi','790','650','resizable=1,scrollbars=1,status=0,toolbar=0');
+}
+
+function getPageContent(section)
+{
+    if (section === "content")
+    {
+        if ($("#dvTableContent").length)
+            return $("#dvTableContent").html();
+        return "-";
+    }
+}
+
+function showHelp()
+{
+    $.ajax({
+        url: "../../help/rs_daftarmutasi.html?r=" + Math.random(),
+        success: function (content)
+        {
+            helpBox.show(content);
+
+            setTimeout(function () {
+                $("#divHelpDialog").scrollTop(0);
+            }, 750)
+        },
+        error: function(xhr)
+        {
+            alert(xhr.responseText);
+        }
+    })
+}

@@ -1,0 +1,48 @@
+<html>
+<head>
+    <title>Jadwal Guru</title>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link href="../images/jibas.ico" rel="shortcut icon" />
+    <link rel="stylesheet" type="text/css" href="../style/style.css?<?=filemtime('../style/style.css')?>">
+    <script>
+        document.addEventListener('keydown', function(event) 
+        {
+            if (event.key === 'Escape') 
+                window.close(); 
+        });
+    </script>
+</head>
+<body style="padding: 20px">
+
+<p class="help-title">Jadwal Guru</p>
+
+<p class="help-content">
+    Bagian ini digunakan untuk menentukan jadwal pelajaran yang diajar oleh guru tertentu.
+    Setelah menentukan guru yang dikelola, pengguna memilih hari dan jam yang akan diisi jadwalnya.
+    Setelah itu, pilih mata pelajaran, kelas, dan durasi jam.
+</p>
+
+<p class="help-content">
+    Aplikasi akan <b>mendeteksi jadwal yang bentrok</b>. Misalnya ada jadwal untuk guru yang sama di kelas lain.
+    Atau ada dua jadwal di kelas yang sama pada jam yang sama. Aplikasi akan memberi tahu jadwal yang bentrok dan tidak akan 
+    membiarkan pengguna menyimpan jadwal yang bentrok.
+</p>
+
+<p class="help-content">
+    <b>NOTE:</b>
+    Ada 2 metode untuk pendataan jadwal, yaitu:
+    <ul class="help-content">
+        <li><b>Per Kelas</b>, pengguna menyusun jadwal untuk kelas tertentu berdasarkan guru dan pelajaran tertentu</li>
+        <li><b>Per Guru</b>, pengguna menyusun jadwal untuk guru tertentu berdasarkan kelas dan pelajaran tertentu</li>
+    </ul>
+</p>
+
+<p class="help-content">
+    Ini untuk meudahkan pengguna dalam menyusun jadwal berdasarkan alokasi waktu atau susunan pelajaran.
+</p>
+
+</body>
+</html>
+

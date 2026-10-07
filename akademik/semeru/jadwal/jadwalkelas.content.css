@@ -1,0 +1,41 @@
+.jadwal 
+{
+    border: 1px solid black;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.jam 
+{
+    border: 1px solid black;
+    height: 90px;
+    background-color: #efefef;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.jamStart
+{
+    background-color: #d7edff;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.jamEnd
+{
+    background-color: #ffd8d8;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.jamKeterangan
+{
+    font-size: 11px;
+    line-height: 20px;
+    font-style: italic;
+    color: #333333;
+    background-color: #ffffff;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}

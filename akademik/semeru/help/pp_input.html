@@ -1,0 +1,46 @@
+<html>
+<head>
+    <title>Pendataan Presensi Pelajaran</title>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link href="../images/jibas.ico" rel="shortcut icon" />
+    <link rel="stylesheet" type="text/css" href="../style/style.css?<?=filemtime('../style/style.css')?>">
+    <script>
+        document.addEventListener('keydown', function(event) 
+        {
+            if (event.key === 'Escape') 
+                window.close(); 
+        });
+    </script>
+</head>
+<body style="padding: 20px">
+
+<p class="help-title">Pendataan Presensi Pelajaran</p>
+
+<p class="help-content">
+    Bagian ini digunakan untuk melakukan pendataan presensi pelajaran. 
+    Presensi Pelajaran adalah pendataan kehadiran siswa di kelas saat jam belajar yang diampu oleh seorang Guru.
+</p>
+
+<p class="help-content">
+    Untuk memulai pendataan, pengguna memilih pelajaran dan kelas yang akan didata presensinya.
+    Pengguna juga menentukan jam mulai pembelajaran (jam & menit). Khusus untuk menit, dibulatkan menjadi menit 00, 15, 30 dan 45.
+    Hal ini bertujuan untuk memudahkan guru / staf akademik apabila akan mengubah presensi pelajaran yang telah diinput.
+</p>
+
+<p class="help-content">
+    Berdasarkan jam pembelajaran tersebut, aplikasi akan otomatis menentukan apakah sudah terdapat pendataan presensi di kelas, pelajaran dan jam terpilih.
+    Bila sudah ada pendataan, maka halaman menampilkan isi dari data presensi tersebut.
+    Jika tidak ada, halaman akan menampilkan form pendataan presensi baru.
+</p>
+
+<p class="help-content">
+    Selanjutnya pengguna menentukan guru yang mengajar, durasi, keterlambatan dan materi yang diajarkan.
+    Kemudian menentukan status kehadiran atau ketidakhadiran setiap siswa. 
+</p>    
+
+
+</body>
+</html>
+

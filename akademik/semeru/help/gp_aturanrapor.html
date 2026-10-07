@@ -1,0 +1,66 @@
+<html>
+<head>
+    <title>Aturan Perhitungan Nilai Rapor</title>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link href="../images/jibas.ico" rel="shortcut icon" />
+    <link rel="stylesheet" type="text/css" href="../style/style.css?<?=filemtime('../style/style.css')?>">
+    <script>
+        document.addEventListener('keydown', function(event) 
+        {
+            if (event.key === 'Escape') 
+                window.close(); 
+        });
+    </script>
+</head>
+<body style="padding: 20px">
+
+<p class="help-title">Aturan Perhitungan Nilai Rapor</p>
+
+<p class="help-content">
+    Proses perhitungan nilai rapor adalah sebagai berikut: 
+    <ol class="help-content">
+        <li><b>Jenis Pengujian</b>, guru / staf akademik menentukan jenis pengujian yang akan digunakannya.</li>
+        <li><b>Pengisian Nilai</b>, guru / staf akademik mengisi nilai untuk setiap jenis pengujian.</li>
+        <li><b>Perhitungan Nilai Akhir</b>, guru / staf akademik menentukan nilai akhir untuk setiap jenis pengujian (dihitung otomatis oleh aplikasi).</li>
+        <li><b>Perhitungan Nilai Rapor &amp; Grading</b>, aplikasi <b>otomatis</b> menghitung nilai rapor dari nilai akhir setiap jenis pengujian.</li>
+    </ol>
+</p>
+
+<p class="help-content">
+    Bagian ini digunakan untuk poin no 4, <b>Perhitungan Nilai Rapor</b>.
+    Nilai rapor ditentukan dengan menghitung <b>rata-rata</b> dari <b>Nilai Akhir Jenis Pengujian</b>. 
+    Perhitungan rata-rata tersebut ditentukan berdasarkan <b>bobot</b> dari masing-masing <b>Jenis Pengujian</b>.
+</p>
+
+<p class="help-content">Contoh Aturan Penghitungan Nilai Rapor:</p>
+
+<ul class="help-content">
+    <li>Tugas = 1</li>
+    <li>Ulangan Harian = 2</li>
+    <li>Ulangan Tengah Semester = 3</li>
+    <li>Ulangan Akhir Semester = 4</li>
+</ul>
+
+<p class="help-content">
+    Dengan demikian, nilai rapor ditentukan dengan 
+    <div style="font-family: Arial, sans-serif; display: inline-block; text-align: center; vertical-align: middle;">
+        <div style="border-bottom: 1px solid black; padding-bottom: 2px; margin-bottom: 2px;">
+            ((Nilai Akhir Tugas &times; 1) + (Nilai Akhir Ulangan Harian &times; 2) + (Nilai Akhir UTS &times; 3) + (Nilai Akhir UAS &times; 4))
+        </div>
+        <div>
+            (1 + 2 + 3 + 4)
+        </div>
+    </div>
+</p>
+
+<p class="help-content">
+    Di bagian ini, guru atau staf akademik sekolah, mengatur bobot setiap jenis pengujian yang akan digunakan dalam perhitungan nilai rapor. 
+    Penentuan bobot ini dilakukan untuk setiap <b>Aspek Penilaian</b> (Pengetahuan, Keterampilan, dan Sikap) 
+    pada <b>Mata Pelajaran</b> tertentu. Karena nilai rapor untuk setiap aspek penilaian akan muncul di laporan nilai rapor. 
+</p>
+
+</body>
+</html>
+

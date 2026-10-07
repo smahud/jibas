@@ -1,0 +1,59 @@
+<html>
+<head>
+    <title>Penentuan Nilai Rapor</title>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link href="../images/jibas.ico" rel="shortcut icon" />
+    <link rel="stylesheet" type="text/css" href="../style/style.css?<?=filemtime('../style/style.css')?>">
+    <script>
+        document.addEventListener('keydown', function(event) 
+        {
+            if (event.key === 'Escape') 
+                window.close(); 
+        });
+    </script>
+</head>
+<body style="padding: 20px">
+
+<p class="help-title">Penentuan Nilai Rapor</p>
+
+<p class="help-content">
+    Bagian ini digunakan untuk menentukan nilai rapor siswa. Nilai rapor siswa dihitung berdasarkan <b>Nilai Akhir Jenis Pengujian</b> yang sudah dihitung sebelumnya    
+</p>
+
+<p class="help-content">
+    Nilai rapor dan nilai hurufnya (Grading) akan dihitung secara otomatis oleh aplikasi. 
+    Sebelum melakukan penentuan nilai rapor, pastikan beberapa hal berikut:
+</p>
+
+<ol class="help-content">
+    <li>
+        <b>Nilai Akhir Jenis Pengujian</b>: 
+        Pastikan telah menentukan nilai akhir jenis pengujian di menu Pendataan Nilai, misalnya nilai akhir
+        Tugas, Ulangan Harian, Kuis, UTS, UAS dan lainnya.
+    </li>
+    <li>
+        <b>Aturan Perhitungan Nilai Rapor</b>: 
+        adalah aturan pembobotan untuk menghitung nilai rapor siswa.
+        Contohnya: nilai akhir Tugas bobotnya 30%, nilai akhir UTS bobotnya 20%, nilai akhir UAS bobotnya 30%. 
+        Untuk mengatur aturan ini, dapat dilakukan melalui bagian <b>Guru &amp; Pelajaran</b> di menu Aturan Perhitungan Nilai Rapor.
+        Setiap guru dapat memiliki aturan perhitungan nilai rapor yang berbeda-beda tergantung kebijakan nya.
+     </li>
+     <li>
+        <b>Aturan Grading Rapor</b>: 
+        adalah aturan pemberian nilai huruf (Grading) dari nilai rapor siswa
+        Contohnya: nilai rapor 8 - 10 gradingnya A, nilai rapor 6 - 8 gradingnya B.
+        Untuk mengatur aturan ini, dapat dilakukan melalui bagian <b>Guru &amp; Pelajaran</b> di menu Aturan Grading Rapor.
+     </li>
+</ol>
+
+<p class="help-content">
+    <b>CATATAN:</b>
+    Apabila ada perubahan data nilai ujian, maka pengguna atau Guru harus <b>menghitung ulang</b> nilai akhir jenis pengujian
+    dan juga nilai rapor.
+</p>    
+
+</body>
+</html>
+

@@ -3,7 +3,7 @@
  * JIBAS Education Community
  * Jaringan Informasi Bersama Antar Sekolah
  *
- * @version: 33.0 (Jan 05, 2026)
+ * @version: 36.0 (Oct 07, 2026)
  * @notes:
  *
  * Copyright (C) 2024 JIBAS (http://www.jibas.net)
@@ -21,6 +21,19 @@
  * You should have received a copy of the GNU General Public License
  **[N]**/ ?>
 <?php
+
+function GetReplidCalonSiswa($db, $nic)
+{
+    $sql = "SELECT replid 
+              FROM jbsakad.calonsiswa
+             WHERE nopendaftaran = '$nic'";
+    $res = $db->QueryDb($sql); 
+    if ($row = mysqli_fetch_row($res))
+        return $row[0];
+    
+    return 0;             
+}
+
 function ShowInfoCalonSiswa($db)
 {
     global $idCalon, $nic, $nama, $idKelompok, $kelompok, $idProses, $proses, $departemen;

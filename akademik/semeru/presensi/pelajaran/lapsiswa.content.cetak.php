@@ -1,0 +1,115 @@
+<?php
+/**[N]**
+ * JIBAS Education Community
+ * Jaringan Informasi Bersama Antar Sekolah
+ *
+ * @version: 36.0 (Oct 07, 2026)
+ * @notes:
+ *
+ * Copyright (C) 2024 JIBAS (http://www.jibas.net)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ **[N]**/ ?>
+<?php
+require_once('../../include/sessionchecker.php');
+require_once('../../include/sessioninfo.php');
+require_once('../../include/config.php');
+require_once('../../library/common.func.php');
+require_once('../../include/db.onfunc.php');
+require_once('../../include/getheader2.php');
+require_once('../../include/errorhandler.php');
+
+$db = new Db();
+$db->TryOpenExit();
+
+$departemen = RequestData("departemen", "yayasan");
+$nis = RequestData("nis", "");
+$nama = RequestData("nama", "");
+$tahunAwal = RequestData("tahunawal", 0);
+$bulanAwal = RequestData("bulanawal", 0);
+$tanggalAwal = RequestData("tanggalawal", 0);
+$tahunAkhir = RequestData("tahunakhir", 0);
+$bulanAkhir = RequestData("bulanakhir", 0);
+$tanggalAkhir = RequestData("tanggalakhir", 0);
+
+$tanggal = $tanggalAwal . " " . NamaBulan($bulanAwal) . " " . $tahunAwal;
+$tanggal .= " s/d " . $tanggalAkhir . " " . NamaBulan($bulanAkhir) . " " . $tahunAkhir;
+
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link rel="stylesheet" type="text/css" href="../../style/style.css">
+    <link rel="stylesheet" type="text/css" href="../../style/colors.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Rekapitulasi Presensi Harian</title>
+    <script language="javascript" src="../../script/jquery-3.7.1.min.js"></script>
+    <script type="application/javascript">
+        $(document).ready(function ()
+        {
+            var content;
+            var rekap;
+            var barchart;
+            if (window.opener && typeof window.opener.getPageContent === "function")
+            {
+                content = window.opener.getPageContent("content");
+                rekap = window.opener.getPageContent("rekap");
+                barchart = window.opener.getPageContent("barchart");
+            }
+
+            $("#spReport").html(content);
+            $("#spReport").find('.hide-in-report').remove();
+
+            $("#spRekap").html(rekap);
+
+            $("#spBarChart").html(barchart);
+
+            var table = $('#table');
+            table.find('tr').each(function() {
+                $(this).find('td.hide-in-report').remove();
+            });
+
+            window.print();
+        });
+    </script>
+</head>
+
+<body>
+<table border="0" cellpadding="10" cellpadding="5" width="780" align="left">
+<tr>
+    <td align="left" valign="top">
+
+<?=     getHeader2($db, $departemen) ?>
+
+        <center><font size="4"><strong>REKAPITULASI PRESENSI PELAJARAN</strong></font><br /> </center><br>
+
+        <span><span style='display: inline-block; min-width: 100px'>Departemen:</span> <b><?= $departemen ?></b></span><br>
+        <span><span style='display: inline-block; min-width: 100px'>Nama:</span> <b><?= $nama ?></b></span><br>
+        <span><span style='display: inline-block; min-width: 100px'>NIS:</span> <b><?= $nis ?></b></span><br>
+        <span><span style='display: inline-block; min-width: 100px'>Tanggal:</span> <b><?= $tanggal ?></b></span><br>
+
+        <table border="0" cellspacing="2" cellpadding="2" width="100%">
+        <tr>
+            <td align="left">
+                <div id="spReport"></div><br>
+                <div id="spRekap" style="width: 300px; max-width: fit-content;  margin-left: auto;  margin-right: auto;"></div><br>
+                <div id="spBarChart" style="text-align: center"></div>
+            </td>
+        </tr>
+        </table>
+
+    </td>
+</tr>
+</table>
+</body>
+</html>

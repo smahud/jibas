@@ -1,0 +1,815 @@
+body
+{
+	font-family: Verdana, serif;
+	font-size                 : 11px;
+	color                     : #000000;
+	background-color          : #FFFFFF;
+}
+
+tr, td
+{
+	font-family: Verdana, serif;
+	font-size                 : 11px;
+	border-collapse    : collapse;
+}
+
+input, textarea
+{
+    margin           : 1px;
+	font-size        : 11px;
+	font-family: Verdana, serif;
+	color            : #000000;
+	background-color : #FFFFFF;
+
+}
+
+option, select
+{
+    margin           : 1px;
+	font-size        : 12px;
+	font-family      : Verdana;
+	color            : #000000;
+	background-color : #FFFFFF;
+}
+
+a, A:link, a:visited, a:active
+{
+    color           : #000000;
+    font-weight     : bold;
+	font-family: Verdana, serif;
+    font-size       : 12px;
+	text-decoration : none;
+}
+
+A:hover
+{
+    color           : blue;
+    text-decoration : underline;
+	font-family: Verdana, serif;
+    font-size       : 12px;
+	font-weight     : bold;
+}
+
+.asmall
+{
+	color           : blue;
+	cursor: default;
+	font-weight: normal;
+	font-family: Verdana, serif;
+	font-size       : 11px ;
+	text-decoration : none;
+}
+
+.asmall:hover
+{
+	color           : red;
+	cursor: pointer;
+	font-weight: normal;
+	font-family: Verdana, serif;
+	font-size       : 11px ;
+	text-decoration: underline;
+}
+
+.awhite
+{
+	color: #ffffff;
+	cursor: default;
+	font-weight: normal;
+	text-decoration : none;
+}
+
+.awhite:hover
+{
+	color: yellow;
+	cursor: pointer;
+	font-weight: normal;
+	text-decoration: underline;
+}
+
+.ablue
+{
+	color: blue;
+	cursor: default;
+	font-weight: normal;
+	text-decoration : none;
+}
+
+.ablue:hover
+{
+	color: red;
+	cursor: pointer;
+	font-weight: normal;
+	text-decoration: underline;
+}
+
+.ablack
+{
+	color: black;
+	cursor: default;
+	font-weight: normal;
+	text-decoration : none;
+}
+
+.ablack:hover
+{
+	color: blue;
+	cursor: pointer;
+	font-weight: normal;
+	text-decoration: underline;
+}
+
+A.headerlink
+{
+    margin           : 1px;
+	font-size        : 12px;
+	font-family      : Verdana;
+	color       : #FFFFFF;
+	
+}
+
+.but
+{
+    cursor:pointer;
+    border:outset 1px #ccc;
+    background:#999;
+    color:#666;
+    font-weight:bold;
+    padding: 1px 2px;
+    background:url(formbg.gif) repeat-x left top;
+}
+
+.box-outline-blue
+{
+	border: 1px solid #2091fc;
+	padding: 4px;
+	font-family: Verdana, serif;
+	border-radius: 4px;
+	font-size: 12px;
+	background-color: #fff;
+	color: #2091fc;
+}
+
+.dialogButtonPositive
+{
+	cursor:pointer;
+	background-color: #1a73e8;
+	color: white;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding: 5px;
+	border: none;
+	border-radius: 6px;
+	min-width: 40px;
+	min-height: 30px;
+}
+
+.dialogButtonNegative
+{
+	cursor:pointer;
+	background-color: #8d0000;
+	color: white;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding: 5px;
+	border: none;
+	border-radius: 6px;
+	min-width: 40px;
+	min-height: 30px;
+}
+
+.dialogButtonGreen
+{
+	cursor:pointer;
+	background-color: #009252;
+	color: white;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding: 5px;
+	border: none;
+	border-radius: 6px;
+	min-width: 40px;
+	min-height: 30px;
+}
+
+.dialogButtonMagenta
+{
+	cursor:pointer;
+	background-color: #74025b;
+	color: white;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding: 5px;
+	border: none;
+	border-radius: 6px;
+	min-width: 40px;
+	min-height: 30px;
+}
+
+.dialogButtonMaroon
+{
+	cursor:pointer;
+	background-color: #8D021F;
+	color: white;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding: 5px;
+	border: none;
+	border-radius: 6px;
+	min-width: 40px;
+	min-height: 30px;
+}
+
+.dialogButtonOrange
+{
+	cursor:pointer;
+	background-color: #ffca00;
+	color: #333;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding: 5px;
+	border: none;
+	border-radius: 6px;
+	min-width: 40px;
+	min-height: 30px;
+}
+
+.dialogButtonCyan
+{
+	cursor:pointer;
+	background-color: #00c9f3;
+	color: white;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding: 5px;
+	border: none;
+	border-radius: 6px;
+	min-width: 40px;
+	min-height: 30px;
+}
+
+
+.dialogButtonGray
+{
+	cursor:pointer;
+	background-color: #6c747e;
+	color: white;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding: 5px;
+	border: none;
+	border-radius: 6px;
+	min-width: 40px;
+	min-height: 30px;
+}
+
+.header
+{
+    border:solid 1px #ccc;
+    background:#999;
+    color: #ffffff;
+    font-weight:bold;
+    padding: 1px 2px;
+    background:url(headerbg15.png) repeat-x left top;
+    border-collapse    : collapse;
+    font-size        : 12px;
+	height:30px;
+}
+
+.header-bgonly
+{
+	border:solid 1px #ccc;
+	background:#1a5e9d;
+	color: #ffffff;
+	font-weight:bold;
+	padding: 1px 2px;
+	border-collapse    : collapse;
+	font-size        : 12px;
+	height:30px;
+}
+
+.header-sm
+{
+	border:solid 1px #ccc;
+	background:#999;
+	color: #ffffff;
+	font-weight:bold;
+	padding: 1px 2px;
+	background:url(headerbg15-sm.png) repeat-x left top;
+	border-collapse    : collapse;
+	font-size        : 11px;
+	height:20px;
+}
+
+.tab
+{
+	font-family: Verdana, serif;
+	font-size: 11px;
+	color: #000000;
+	background-color: #FFFFFF;
+	border: solid 1px #ccc;
+	border-collapse: collapse;
+}
+
+.tabShadow
+{
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.shadow-1
+{
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.shadow-2
+{
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.shadow-3
+{
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.55);
+}
+
+.tab th,
+.tab td {
+	border: solid 1px #ccc; /* force Firefox to use #ccc for inner borders */
+	padding: 5px;
+}
+
+.numberColumn
+{
+	font-family: Verdana, serif;
+	font-size: 11px;
+	color: #000000;
+	background-color: #efefef;
+}
+
+.footerColumn
+{
+	font-family: Verdana, serif;
+	font-size: 12px;
+	color: #000000;
+	background-color: #c0e0ef;
+}
+
+.h
+{
+	background-color:#565656;
+	border-collapse    : collapse;
+	color:#FFFFFF;
+	font-weight:bold;
+}
+
+.inputbox_readonly
+{
+	border: 1px solid #ccc;
+	padding: 4px;
+	font-family: Verdana, serif;
+	border-radius: 4px;
+	font-size: 12px;
+	color: #5b5b5b;	
+	background-color: #dedede;
+}
+
+.inputbox
+{
+	border: 1px solid #ccc;
+	padding: 4px;
+	font-family: Verdana, serif;
+	font-size: 12px;
+	border-radius: 4px;
+}
+
+.inputbox:focus {
+	border: 1px solid #ccc;
+	padding: 4px;
+	font-family: Verdana, serif;
+	font-size: 12px;
+	border-radius: 4px;
+	background-color: #f4f8c0;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.33);
+}
+
+.pageTitle
+{
+	font-family: "Segoe UI", serif;
+	font-size: 24px;
+	color: #666;
+}
+
+.pageLink
+{
+	color: #000000;
+	font-family: Verdana, serif;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.pageLinkCurrent
+{
+	color: #666;
+	font-family: Verdana, serif;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.dialogTitle
+{
+	font-family: "Segoe UI", serif;
+	font-size: 18px;
+	font-weight: bold;
+	color: #333;
+}
+
+.consolasFont
+{
+	font-family: Consolas, sans-serif;
+	font-size: 12px;
+	color: #333;
+}
+
+.rounded-box {
+	background-color: white; /* green background */
+	border: solid 1px #999;
+	display: flex;
+	padding: 5px;
+	border-radius: 15px; /* rounded edges */
+}
+
+.avatar-circle {
+	border-radius: 50%;
+	object-fit: cover;
+	display: block;
+	border: 3px solid #fff;
+	box-shadow: 0 2px 8px rgba(0,0,0,.75);
+}
+
+.fst-normal
+{
+	font-weight: normal;
+}
+
+.fst-bold
+{
+	font-weight: bold;
+}
+
+.fst-italic
+{
+	font-style: italic;
+}
+
+.fst-underline
+{
+	text-decoration: underline;
+}
+
+.inputbox-readonly
+{
+	background-color: #dedede;
+}
+
+.help-icon-1 {
+	width: 18px;
+	height: 18px;
+	object-fit: contain;
+}
+
+.help-dialog
+{
+	margin: 5px 10px;
+}
+
+.help-title
+{
+	font-family: "Segoe UI", sans-serif;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.help-content
+{
+	font-family: "Segoe UI", sans-serif;
+	font-size: 14px;
+	line-height: 25px;
+	text-align: justify;
+}
+
+.help-list
+{
+	font-family: "Segoe UI", sans-serif;
+	font-size: 14px;
+	line-height: 25px;
+	text-align: justify;
+}
+
+.inputbox-money
+{
+	border: 1px solid #999;
+	padding: 4px;
+	font-family: 'Courier New', sans-serif;
+	border-radius: 4px;
+	font-size: 14px;
+	font-weight: bold;
+	color: #5b5b5b;
+}
+
+.money
+{
+	font-family: 'Courier New', sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.numberColumn
+{
+	font-family: Verdana, serif;
+	font-size: 11px;
+	color: #000000;
+	background-color: #efefef;
+}
+
+.fs-24
+{
+	font-size: 24px;
+}
+
+.fs-22
+{
+	font-size: 22px;
+}
+
+.fs-20
+{
+	font-size: 20px;
+}
+
+.fs-18
+{
+	font-size: 18px;
+}
+
+.fs-16
+{
+	font-size: 16px;
+}
+
+.fs-14
+{
+	font-size: 14px;
+}
+
+.fs-13
+{
+	font-size: 13px;
+}
+
+.fs-12
+{
+	font-size: 12px;
+}
+
+.fs-11
+{
+	font-size: 11px;
+}
+
+.fs-10
+{
+	font-size: 10px;
+}
+
+.fs-9
+{
+	font-size: 9px;
+}
+
+.cur-hand
+{
+	cursor: pointer;
+}
+
+.cur-default
+{
+	cursor: pointer;
+}
+
+.ff-consolas
+{
+	font-family: 'Courier New', Courier, monospace;
+}
+
+.ff-courier
+{
+	font-family: 'Courier New', Courier, monospace;
+}
+
+.ff-verdana
+{
+	font-family: verdana, serif;
+}
+
+.ff-segoe
+{
+	font-family: 'Segoe UI', sans-serif;
+}
+
+.ff-sansserif
+{
+	font-family: sans-serif,Arial, Helvetica;
+}
+
+.ff-arial
+{
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.ff-georgia
+{
+	font-family: Georgia, serif;
+}
+
+.ff-times
+{
+	font-family: 'Times New Roman', Times, serif;
+}
+
+.loading-box 
+{
+  /* 1. Position it at the top center */
+  position: absolute;
+  top: 20px;          /* Distance from the top edge */
+  left: 50%;          /* Move left edge to the middle of the screen */
+  transform: translateX(-50%); /* Pull it back by 50% of its own width */
+
+  /* 2. Style it as a rounded box */
+  padding: 15px 40px;
+  background: linear-gradient(135deg, #bf00ff, #0000ff);
+  color: white;
+  border-radius: 50px; /* High value for pill-shaped/rounded ends */
+  
+  /* 3. Add depth */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+  font-family: sans-serif;
+  white-space: nowrap; /* Prevents text from wrapping if the box is small */
+
+  /* The magic property */
+  z-index: 9999;
+  display: none;
+}
+
+.rotate-90 {
+    transform: rotate(-90deg); 
+    display: block;
+    white-space: nowrap;
+}
+
+.h20
+{
+	height: 20px;
+}
+
+.h25
+{
+	height: 25px;
+}
+
+.h30
+{
+	height: 30px;
+}
+
+.h35
+{
+	height: 35px;
+}
+
+.h40
+{
+	height: 40px;
+}
+
+.h45
+{
+	height: 45px;
+}
+
+.h50
+{
+	height: 50px;
+}
+
+.w20
+{
+	width: 20px;
+}
+
+.w25
+{
+	width: 25px;
+}
+
+.w30
+{
+	width: 30px;
+}
+
+.w40
+{
+	width: 40px;
+}
+
+.w50
+{
+	width: 50px;
+}
+
+.w60
+{
+	width: 60px;
+}
+
+.w70
+{
+	width: 70px;
+}
+
+.w80
+{
+	width: 80px;
+}
+
+.w90
+{
+	width: 90px;
+}
+
+.w100
+{
+	width: 100px;
+}
+
+.w120
+{
+	width: 120px;
+}
+
+.w140
+{
+	width: 140px;
+}
+
+.w160
+{
+	width: 160px;
+}
+
+.w180
+{
+	width: 180px;
+}
+
+.w200
+{
+	width: 200px;
+}
+
+.br7
+{
+	border-radius: 7px;
+}
+
+.br5
+{
+	border-radius: 5px;
+}
+
+.br3
+{
+	border-radius: 360px;
+}
+
+.dblock
+{
+	display: inline-block;
+}
+
+.dnone
+{
+	display: none;
+}
+
+.tacenter
+{
+	text-align: center;
+}
+
+.taright
+{
+	text-align: right;
+}
+
+.tleft
+{
+	text-align: left;
+}

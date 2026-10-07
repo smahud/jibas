@@ -3,7 +3,7 @@
  * JIBAS Education Community
  * Jaringan Informasi Bersama Antar Sekolah
  * 
- * @version: 33.0 (Jan 05, 2026)
+ * @version: 36.0 (Oct 07, 2026)
  * @notes: 
  * 
  * Copyright (C) 2024 JIBAS (http://www.jibas.net)
@@ -214,12 +214,12 @@ function ShowFileShareDirs($db)
         echo "<ul class='mktree' id='tree1'>";
         if ($nSubDir == 0)
         {
-            echo "&nbsp;<li class='liBullet'>&nbsp;<a style='text-decoration:none;' href='files.php?iddir=$idRoot' target='files'><img src='../images/ico/folder.gif' border='0'>&nbsp;(root)</a>&nbsp;";
+            echo "&nbsp;<li class='liBullet'>&nbsp;<a style='text-decoration:none;' href='fileshare.files.php?iddir=$idRoot' target='files'><img src='../images/ico/folder.gif' border='0'>&nbsp;(root)</a>&nbsp;";
             echo "</li>";
         }
         else
         {
-            echo "&nbsp;<li class='liClosed'>&nbsp;<a style='text-decoration:none;' href='files.php?iddir=$idRoot' target='files'><img src='../images/ico/folder.gif' border='0'>&nbsp;(root)</a>&nbsp;";
+            echo "&nbsp;<li class='liClosed'>&nbsp;<a style='text-decoration:none;' href='fileshare.files.php?iddir=$idRoot' target='files'><img src='../images/ico/folder.gif' border='0'>&nbsp;(root)</a>&nbsp;";
             echo "<ul>";
             
             TraverseDir($db, $idRoot, 2);

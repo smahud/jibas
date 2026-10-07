@@ -1,0 +1,61 @@
+<html>
+<head>
+    <title>Aturan Grading Nilai Rapor</title>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link href="../images/jibas.ico" rel="shortcut icon" />
+    <link rel="stylesheet" type="text/css" href="../style/style.css?<?=filemtime('../style/style.css')?>">
+    <script>
+        document.addEventListener('keydown', function(event) 
+        {
+            if (event.key === 'Escape') 
+                window.close(); 
+        });
+    </script>
+</head>
+<body style="padding: 20px">
+
+<p class="help-title">Aturan Grading Nilai Rapor</p>
+
+<p class="help-content">
+    Proses perhitungan nilai rapor adalah sebagai berikut: 
+    <ol class="help-content">
+        <li><b>Jenis Pengujian</b>, guru / staf akademik menentukan jenis pengujian yang akan digunakannya.</li>
+        <li><b>Pengisian Nilai</b>, guru / staf akademik mengisi nilai untuk setiap jenis pengujian.</li>
+        <li><b>Perhitungan Nilai Akhir</b>, guru / staf akademik menentukan nilai akhir untuk setiap jenis pengujian (dihitung otomatis oleh aplikasi).</li>
+        <li><b>Perhitungan Nilai Rapor &amp; Grading</b>, aplikasi <b>otomatis</b> menghitung nilai rapor dari nilai akhir setiap jenis pengujian.</li>
+    </ol>
+</p>
+
+<p class="help-content">Bagian ini melengkapi proses no 4, yaitu Perhitungan Nilai Rapor &amp; Grading. 
+    Aturan Grading Nilai Rapor adalah aturan yang menentukan nilai huruf dari nilai angka yang diperoleh oleh siswa
+</p>
+
+<p class="help-content">
+    Nilai huruf ini diperoleh setelah nilai angka rapor dihitung. Jadi sebelum menentukan nilai huruf, pastikan nilai angka rapor dihitung dengan benar.
+    Perhitungan nilai rapor tersebut dilakukan melalui <b>Aturan Perhitungan Nilai Rapor</b>.
+</p>
+
+<p class="help-content">Contoh Aturan Grading:</p>
+
+<ul class="help-content">
+    <li>Nilai 90 - 100 = A</li>
+    <li>Nilai 80 - 89 = B</li>
+    <li>Nilai 70 - 79 = C</li>
+    <li>Nilai 60 - 69 = D</li>
+    <li>Nilai 50 - 59 = E</li>
+</ul>
+
+<p class="help-content">
+    Penentuan Aturan Grading ini bisa <b>berbeda</b> antara Guru satu dengan Guru yang lainnya, tergantung kebijakan sekolah atau guru.
+</p>
+
+<p class="help-content">
+    Aturan Grading ini juga perlu ditentukan untuk setiap <b>Aspek Penilaian</b> (Pengetahuan, Keterampilan dan Sikap).
+    Karena nilai grading ini akan muncul di laporan rapor untuk setiap aspek penilaian.
+</p>
+
+</body>
+</html>
+

@@ -1,0 +1,60 @@
+<html>
+<head>
+    <title>Pendataan Presensi Harian</title>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link href="../images/jibas.ico" rel="shortcut icon" />
+    <link rel="stylesheet" type="text/css" href="../style/style.css?<?=filemtime('../style/style.css')?>">
+    <script>
+        document.addEventListener('keydown', function(event) 
+        {
+            if (event.key === 'Escape') 
+                window.close(); 
+        });
+    </script>
+</head>
+<body style="padding: 20px">
+
+<p class="help-title">Pendataan Presensi Harian</p>
+
+<p class="help-content">
+    Bagian ini digunakan untuk melakukan pendataan presensi harian siswa. 
+    Guna menghemat waktu, pendataan presensi harian dilakukan berdasarkan rekapitulasi kehadiran siswa per rentang waktu.
+    Jadi, tidak mendata presensi siswa per hari satu per satu.
+</p>
+
+<p class="help-content">
+    Untuk memulai pendataan, pengguna memilih kelas yang akan didata presensinya dan juga bulan pendataan.
+</p>
+
+<p class="help-content">
+    Bila melakukan pendataan baru, klik tombol <b>Pendataan Baru</b> di pojok kanan atas untuk membuka form pendataan baru.
+    Apabila hendak melakukan perubahan data presensi yang sudah diinputkan, klik pada salah satu tanggal riwayat pendataan presensi.
+</p>
+
+<p class="help-content">
+    Selanjutnya tentukan rentang tanggal awal dan tanggal akhir pendataan.
+    Aplikasi otomatis menghitung jumlah hari aktif antara kedua tanggal tersebut. 
+</p>    
+
+<p class="help-content">
+    Bila di antara rentang tanggal tersebut terdapat hari libur dan tidak ada kegiatan belajar di hari libur tersebut,
+    maka pengguna dapat mengurangi jumlah hari aktifnya sesuai dengan jumlah hari kegiatan belajarnya dengan mengurangi jumlah hari libur.
+</p>
+
+<p class="help-content">
+    Selanjutnya pengguna menentukan jumlah kehadiran siswa sesuai dengan jumlah hari aktifnya. 
+    Selain jumlah kehadiran, pengguna juga perlu menentukan jumlah ketidakhadiran siswa. 
+    Ketidakhadiran siswa bisa berupa <b>Izin, Cuti, Sakit dan Alpa</b>. 
+    Tentukan jumlah ketidakhadiran siswa sesuai dengan jenis ketidakhadirannya.
+</p>
+
+<p class="help-content">
+    Total kehadiran ditambah total ketidakhadiran siswa harus sama dengan jumlah hari aktif belajar. 
+    Jika tidak, maka aplikasi akan menampilkan pesan kesalahan. 
+</p>
+
+</body>
+</html>
+

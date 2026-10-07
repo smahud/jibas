@@ -3,7 +3,7 @@
  * JIBAS Education Community
  * Jaringan Informasi Bersama Antar Sekolah
  *
- * @version: 35.5 (August 10, 2026)
+ * @version: 36.0 (Oct 07, 2026)
  * @notes:
  *
  * Copyright (C) 2024 JIBAS (http://www.jibas.net)
@@ -21,6 +21,6 @@
  * You should have received a copy of the GNU General Public License
  **[N]**/ ?>
 <?php
-$VERSION = "KEU-35.5.1389";
-$BUILDDATE = "07.AGT.2026";
+$VERSION = "KEU-36.0.1403";
+$BUILDDATE = "07.OCT.2026";
 ?>

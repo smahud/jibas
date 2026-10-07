@@ -3,7 +3,7 @@
  * JIBAS Education Community 
  * Jaringan Informasi Bersama Antar Sekolah 
  *  
- * @version: 35.5 (August 10, 2026)
+ * @version: 36.0 (Oct 07, 2026)
  * @notes:  
  *  
  * Copyright (C) 2024 JIBAS (http://www.jibas.net) 
@@ -22,10 +22,10 @@
  **[N]**/ ?>
 <?php
 /* Versi SISFO JIBAS */
-$G_VERSION="35.5";
+$G_VERSION="36.0";
 
 /* Build date SISFO JIBAS */
-$G_BUILDDATE='10 Agustus 2026';
+$G_BUILDDATE='07 Oktober 2026';
 
 /* Hak Cipta SISFO JIBAS */
 $G_COPYRIGHT='';
