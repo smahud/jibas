@@ -1,0 +1,10 @@
+/* Integrasi visual dengan Verdana, pageTitle dan dialogButtonPositive Rinjani 36. */
+body.rp-rinjani { font-family: Verdana, Arial, sans-serif; font-size: 12px; }
+.rp-rinjani h1 { font-family: 'Segoe UI', Verdana, sans-serif; color: #666; font-size: 24px; }
+.rp-rinjani h3, .rp-rinjani thead th { background: #f0f4f8; }
+.rp-rinjani .button, .rp-rinjani button { background: #1a73e8; color: white; border: none; border-radius: 6px; padding: 7px 12px; }
+.rp-rinjani button:disabled { background: #ddd; color: #777; }
+.rp-rinjani input, .rp-rinjani select { border: 1px solid #999; border-radius: 4px; padding: 5px; }
+.rp-rinjani .breadcrumb { margin: 4px 0; font-size: 11px; }
+.rp-rinjani .header-frame { height: 180px; }
+@media print { body.rp-rinjani { font-size: 10pt; } }

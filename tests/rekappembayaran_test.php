@@ -34,7 +34,7 @@ $student = array('nis' => '0012', 'nama' => '<script>alert(1)</script>', 'aktif'
     'departemen' => 'MTs', 'tingkat' => 'VII', 'kelas' => 'A');
 
 check(RpCanAccess(array('namakeuangan' => 'M', 'tingkatkeuangan' => '1')), 'Manajer ditolak.');
-check(RpCanAccess(array('namakeuangan' => 'A', 'tingkatkeuangan' => '0')), 'Administrator ditolak.');
+check(RpCanAccess(array('namakeuangan' => 'A', 'tingkatkeuangan' => '0', 'login' => 'landlord')), 'Administrator ditolak.');
 check(!RpCanAccess(array('namakeuangan' => 'S', 'tingkatkeuangan' => '2', 'departemenkeuangan' => 'ALL')), 'Staf ALL mendapat akses.');
 check(!RpCanAccess(array()), 'Sesi kosong mendapat akses.');
 check(!RpCanAccess(array('namakeuangan' => 'X', 'tingkatkeuangan' => '99')), 'Level tidak dikenal mendapat akses.');

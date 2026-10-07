@@ -74,3 +74,7 @@ Pembangunan ulang memisahkan akses/input, query, model perhitungan, tampilan ber
 - Laporan tidak mengaudit keseimbangan `jurnaldetail`, seluruh rekening, tabungan, pembayaran calon siswa, atau seluruh integrasi gateway.
 - Pola legacy seperti interpolasi SQL, sesi yang dibuka berulang, PHPExcel lama, dan query per baris masih ada pada halaman lain. Perubahan ini dibatasi pada fitur rekap.
 - Skema dan query diperiksa pada database lokal yang dapat diakses, tetapi tabel siswa/tagihan/pembayaran lokal kosong saat verifikasi. Perilaku berisi data diuji dengan tabel sementara terisolasi, bukan data operasional sekolah.
+
+## Pembaruan 7 Oktober 2026
+
+Baseline provider 36.0 dan Rinjani KEU-36.0.1403 terintegrasi. Rekap tersedia pada kedua antarmuka dengan model/query bersama. Landlord bebas; manajer wajib memiliki penetapan departemen valid dan hanya dapat memilih siswa yang sedang/pernah berada di departemen tersebut. Setelah lolos, seluruh riwayat keuangan ditampilkan. Staf ditolak. Pengelolaan akun kini hanya landlord; getAccess() legacy untuk fitur lain tetap berlaku. Penetapan tidak membutuhkan tabel baru. Aturan terbaru, 308 pemeriksaan, batas kompatibilitas provider dan panduan koreksi terdapat pada [catatan utama](../README_REKAP_PEMBAYARAN_SISWA.md) serta [PRD](../PRD_REKAP_PEMBAYARAN_SISWA.md).

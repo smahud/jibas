@@ -23,6 +23,7 @@
 <?php
 require_once('../include/sessioninfo.php');
 require_once('../include/sessionchecker.php');
+require_once __DIR__ . '/../../library/rekappembayaran_model.php';
 require_once('../library/common.func.php');
 require_once('../library/qsbuilder.php');
 ?>
@@ -112,6 +113,9 @@ require_once('../library/qsbuilder.php');
                 <hr style="border: 1px dashed #999;">
                 <?=$bullet_blue?><a href="laporan/rekap.pembayaran.php">Rekapitulasi Penerimaan</a><br>
                 <?=$bullet_blue?><a href="laporan/rekap.tunggakan.php">Rekapitulasi Tunggakan Siswa</a><br>
+                <?php if (RpCanAccess($_SESSION)): ?>
+                <?=$bullet_blue?><a href="laporan/rekapsiswa.php">Rekap Pembayaran Siswa</a><br>
+                <?php endif; ?>
                 <?=$bullet_blue?><a href="laporan/penerimaanlain.php">Penerimaan Lain</a><br>
                 <?=$bullet_blue?><a href="laporan/jurnalpenerimaan.php">Jurnal Penerimaan</a><br>
             </td>

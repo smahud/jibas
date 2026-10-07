@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../library/rekappembayaran_admin_guard.php'; ?>
 <?php
 /**[N]**
  * JIBAS Education Community
@@ -177,11 +178,13 @@ function SimpanEdit()
         $keterangan = RequestData("keterangan", "");
 
 
-        $sql = "UPDATE jbsuser.hakakses 
+        // Editing an existing manager must preserve the separately assigned recap scope.
+        $previousLevel = (int)$db->FetchSingle("SELECT tingkat FROM jbsuser.hakakses WHERE replid=" . (int)$iduser, 0);
+        $sql = "UPDATE jbsuser.hakakses
                    SET tingkat = $status_user, keterangan = '$keterangan'";
         if ($status_user == 2)
             $sql .= ", departemen = '$departemen'";
-        else
+        else if ($status_user != 1 || $previousLevel != 1)
             $sql .= ", departemen = NULL";
         $sql .= " WHERE replid = $iduser";
         $db->QueryDb($sql);

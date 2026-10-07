@@ -5,7 +5,8 @@ function RpCanAccess($session)
 {
     // Level 0: administrator (landlord), 1: manajer, 2: staf departemen.
     return isset($session['namakeuangan'], $session['tingkatkeuangan'])
-        && in_array((string)$session['tingkatkeuangan'], array('0', '1'), true);
+        && ((string)$session['tingkatkeuangan'] === '1'
+            || ((string)$session['tingkatkeuangan'] === '0' && ($session['login'] ?? '') === 'landlord'));
 }
 
 function RpText($input, $key, $maxLength)

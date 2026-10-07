@@ -6,6 +6,9 @@ function RpCreateFixtures($db)
     // Nama qualified sama dengan query produksi; TEMPORARY TABLE menutupi tabel asli
     // hanya untuk koneksi ini. Tidak ada INSERT/UPDATE/DELETE ke tabel permanen.
     $definitions = array(
+        'jbsuser.hakakses' => 'replid INT PRIMARY KEY,login VARCHAR(30),modul VARCHAR(30),tingkat INT,departemen VARCHAR(50)',
+        'jbsuser.login' => 'login VARCHAR(30) PRIMARY KEY,aktif INT',
+        'jbssdm.pegawai' => 'nip VARCHAR(30) PRIMARY KEY,nama VARCHAR(100),aktif INT',
         'jbsakad.siswa' => 'nis VARCHAR(20) PRIMARY KEY, nama VARCHAR(100), aktif INT, alumni INT, idkelas INT',
         'jbsakad.kelas' => 'replid INT PRIMARY KEY, kelas VARCHAR(50), idtingkat INT',
         'jbsakad.tingkat' => 'replid INT PRIMARY KEY, tingkat VARCHAR(50), departemen VARCHAR(50)',
@@ -22,7 +25,10 @@ function RpCreateFixtures($db)
     foreach ($definitions as $table => $definition)
         $db->query('CREATE TEMPORARY TABLE ' . $table . ' (' . $definition . ') CHARACTER SET utf8mb4');
     $queries = array(
-        "INSERT INTO jbsakad.departemen VALUES ('RA',1,0),('MI',2,1),('MTs',3,1)",
+        "INSERT INTO jbsakad.departemen VALUES ('RA',1,0),('MI',2,1),('MTs',3,1),('KB',4,1)",
+        "INSERT INTO jbsuser.login VALUES ('managerA',1),('managerB',1),('managerC',1),('managerNone',1),('staff',1)",
+        "INSERT INTO jbssdm.pegawai VALUES ('managerA','Manager RA',1),('managerB','Manager KB',1),('managerC','Manager MI',1),('managerNone','Manager Tanpa Departemen',1),('staff','Staf',1)",
+        "INSERT INTO jbsuser.hakakses VALUES (1,'managerA','KEUANGAN',1,'RA'),(2,'managerB','KEUANGAN',1,'KB'),(3,'managerC','KEUANGAN',1,'MI'),(4,'managerNone','KEUANGAN',1,NULL),(5,'staff','KEUANGAN',2,'MI')",
         "INSERT INTO jbsakad.tingkat VALUES (1,'A','RA'),(2,'I','MI'),(3,'VII','MTs')",
         "INSERT INTO jbsakad.kelas VALUES (1,'RA A',1),(2,'MI A',2),(3,'MTs A',3)",
         "INSERT INTO jbsakad.siswa VALUES ('001','Siswa Contoh',1,0,3),('002','Alumni Contoh',0,1,2),('003','Ann %_',0,0,3),('004','Data Orphan',1,0,3)",

@@ -22,6 +22,7 @@
  **[N]**/ ?>
 <? 
 require_once('include/sessioninfo.php');
+require_once __DIR__ . '/library/rekappembayaran_access.php';
 //require_once('include/theme.php');
 //require_once
  ?>
@@ -53,13 +54,16 @@ alert ('Belum beres');
 </head>
 
 <body leftmargin="0" topmargin="0">
+<?php if (RpIsLandlord($_SESSION)): ?>
+<p><a href="rekappembayaran_akses.php">Penetapan Departemen Rekap Manajer</a></p>
+<?php endif; ?>
 <table border="0" cellpadding="0" cellspacing="0" width="70%" align="left">
 <tr><td valign="top" align="left">
 <p align="left">&nbsp;&nbsp;<font size="5" style="background-color:#ffcc66">&nbsp;</font>&nbsp;<span class="style2"><font face="Verdana" color="Gray">PENGATURAN</font></span></p>
 <table width="80%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td>
-    	<? if (getLevel()!="2"){ ?>
+        <? if (RpIsLandlord($_SESSION)){ ?>
      	<table border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td><a href="user.php"><img src="images/user_group.png" border="0" height="80" /></a></td>

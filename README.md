@@ -1,6 +1,6 @@
 # JIBAS
 
-Source aplikasi JIBAS Education Community berbasis PHP dan MySQL/MariaDB. Source yang diperiksa memuat penanda versi **35.5**. Repository ini berisi aplikasi di `htdocs/jibas`, bukan seluruh instalasi XAMPP atau dump database.
+Source aplikasi JIBAS Education Community berbasis PHP dan MySQL/MariaDB. Source yang diperiksa memuat penanda versi **36.0**. Repository ini berisi aplikasi di `htdocs/jibas`, bukan seluruh instalasi XAMPP atau dump database.
 
 ## Menjalankan
 
@@ -27,7 +27,10 @@ Ekstensi fitur rekap: `mysqli` dengan mysqlnd, `mbstring`, dan `zip`. Pengujian 
 
 **Rekap Pembayaran Siswa** dibangun ulang untuk menampilkan tagihan dan pembayaran lintas departemen/tahun buku dengan satu NIS. Akses: **Keuangan → Penerimaan → Laporan → Rekap Pembayaran Siswa**.
 
+- [PRD patch klasik dan Rinjani](PRD_REKAP_PEMBAYARAN_SISWA.md)
 - [Dokumentasi fitur, aturan perhitungan, dan verifikasi](README_REKAP_PEMBAYARAN_SISWA.md)
 - [Analisis struktur modul Keuangan](keuangan/README.md)
 
 Konfigurasi database, file `.env`, log, dan isi runtime direktori `log/` serta `temp/` dikecualikan melalui `.gitignore`. Source JIBAS menyatakan lisensi GNU GPL versi 3 atau setelahnya; perubahan fitur mengikuti lisensi tersebut.
+
+Patch tersedia pada Keuangan klasik dan Rinjani. Landlord memiliki akses penuh; manajer wajib ditetapkan departemennya oleh landlord dan hanya dapat memilih siswa dengan keanggotaan akademik saat ini/riwayat yang sesuai. Siswa yang memenuhi syarat menampilkan seluruh transaksi lintas departemen. Staf tidak mendapat akses. Update provider juga memuat Akademik Semeru; keterbatasan pustaka legacy PHP 8 dicatat dalam dokumentasi patch.

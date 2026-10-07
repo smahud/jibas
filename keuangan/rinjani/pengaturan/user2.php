@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../library/rekappembayaran_admin_guard.php'; ?>
 <?php
 /**[N]**
  * JIBAS Education Community

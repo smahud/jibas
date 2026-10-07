@@ -23,6 +23,7 @@
 <?php
 require_once('../include/sessioninfo.php');
 require_once('../include/sessionchecker.php');
+require_once __DIR__ . '/../../library/rekappembayaran_access.php';
 require_once('../library/common.func.php');
 require_once('../library/qsbuilder.php');
 ?>
@@ -48,8 +49,11 @@ require_once('../library/qsbuilder.php');
         <table border="0" cellpadding="5" cellspacing="0">
         <tr>
             <td align="center" width="120">
+                <?php if (RpIsLandlord($_SESSION)): ?>
                 <img src="../images/userlist.png" style="width: 40px" title="Daftar Pengguna"><br>
                 <a href="user2.php">Daftar Pengguna</a><br>
+                <a href="rekapsiswa.akses.php">Departemen Rekap Manajer</a><br>
+                <?php endif; ?>
             </td>
             <td align="center" width="10">&nbsp;</td>
             <td align="center" width="120">

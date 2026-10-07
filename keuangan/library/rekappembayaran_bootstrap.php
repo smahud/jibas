@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/rekappembayaran_model.php';
+require_once __DIR__ . '/rekappembayaran_access.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_name('jbskeu');
@@ -22,6 +23,7 @@ header('X-Content-Type-Options: nosniff');
 // Buang hanya output include agar header HTTP dan arsip XLSX tidak tercemar.
 ob_start();
 try {
+    require_once __DIR__ . '/../../include/mainconfig.php';
     require_once __DIR__ . '/../include/config.php';
     require_once __DIR__ . '/../include/db_functions.php';
 } finally {
@@ -29,6 +31,13 @@ try {
 }
 require_once __DIR__ . '/rekappembayaran_data.php';
 require_once __DIR__ . '/rekappembayaran_view.php';
+
+function RpRequestScope()
+{
+    try { return RpResolveScope(RpDb(), $_SESSION); }
+    catch (RpAccessDenied $e) { RpFail($e->getMessage(), 403); }
+    catch (Throwable $e) { RpFail('Hak akses rekap belum dapat diverifikasi.', 500); }
+}
 
 function RpDb()
 {
@@ -53,9 +62,10 @@ function RpFail($message, $status = 400)
 function RpLoadRequestedReport()
 {
     try {
+        $scope = RpRequestScope();
         $nis = RpText($_GET, 'nis', 20);
         if ($nis === '') RpFail('Pilih siswa terlebih dahulu.');
-        $report = RpLoadReport(RpDb(), $nis);
+        $report = RpLoadReport(RpDb(), $nis, $scope);
         if ($report === null) RpFail('Siswa tidak ditemukan.', 404);
         return $report;
     } catch (InvalidArgumentException $e) {

@@ -1,5 +1,26 @@
 <?php
 
+function RpRootUrl()
+{
+    $path = $_SERVER['SCRIPT_NAME'] ?? '';
+    $offset = strpos($path, '/keuangan/');
+    return ($offset === false ? '/jibas' : substr($path, 0, $offset)) . '/keuangan/';
+}
+
+function RpRinjani()
+{
+    return defined('RP_VARIANT') && RP_VARIANT === 'rinjani';
+}
+
+function RpRoute($part)
+{
+    $allowed = array('main','header','pilih','blank','content','cetak','excel','surat_lunas','akses');
+    if (!in_array($part,$allowed,true)) throw new InvalidArgumentException('Halaman tidak valid.');
+    if (!RpRinjani()) return RpRootUrl() . ($part === 'akses' ? 'rekappembayaran_akses.php' : 'laprekappembayaran_siswa_' . $part . '.php');
+    if ($part === 'akses') return RpRootUrl() . 'rinjani/pengaturan/rekapsiswa.akses.php';
+    return RpRootUrl() . 'rinjani/penerimaan/laporan/rekapsiswa' . ($part === 'main' ? '' : '.' . $part) . '.php';
+}
+
 function RpEscape($value)
 {
     return htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -21,7 +42,11 @@ function RpPageStart($title, $assetPrefix = '', $bodyClass = '')
 {
     header('Content-Type: text/html; charset=UTF-8');
     echo '<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">';
-    echo '<title>' . RpEscape($title) . '</title><link rel="stylesheet" href="' . RpEscape($assetPrefix) . 'style/rekappembayaran.css"></head><body class="' . RpEscape($bodyClass) . '">';
+    echo '<title>' . RpEscape($title) . '</title>';
+    if (RpRinjani()) echo '<link rel="stylesheet" href="' . RpEscape(RpRootUrl()) . 'rinjani/style/style.css">';
+    echo '<link rel="stylesheet" href="' . RpEscape(RpRootUrl()) . 'style/rekappembayaran.css">';
+    if (RpRinjani()) echo '<link rel="stylesheet" href="' . RpEscape(RpRootUrl()) . 'rinjani/style/rekappembayaran.css">';
+    echo '</head><body class="' . RpEscape(trim($bodyClass . (RpRinjani() ? ' rp-rinjani' : ''))) . '">';
 }
 
 function RpStudentInfo($student)

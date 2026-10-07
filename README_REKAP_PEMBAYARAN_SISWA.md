@@ -6,13 +6,13 @@ Fitur berada di **Keuangan → Penerimaan → Laporan → Rekap Pembayaran Siswa
 
 ## Penggunaan
 
-1. Login sebagai Manajer Keuangan atau administrator.
-2. Pilih departemen pencarian atau biarkan **Semua departemen**.
+1. Login sebagai Manajer Keuangan dengan departemen yang ditetapkan landlord, atau sebagai landlord.
+2. Pilih departemen pencarian atau biarkan **Semua departemen** (gabungan departemen yang diizinkan untuk manajer).
 3. Isi NIS lengkap, atau nama minimal tiga karakter jika NIS kosong. Jika keduanya diisi, keduanya harus cocok.
 4. Klik nama siswa untuk melihat seluruh tagihan dan pembayaran dengan NIS itu.
 5. Gunakan **Refresh**, **Cetak Rekap**, **Excel**, atau **Surat Lunas** bila tersedia.
 
-Siswa aktif, nonaktif, dan alumni dapat dicari. NIS dicocokkan tepat, nama dicocokkan sebagian, dan hasil dibatasi 50 siswa per halaman dengan navigasi berikutnya/sebelumnya. Karakter `%`/`_` pada nama diperlakukan sebagai teks literal. Filter departemen mencakup kelas terakhir, riwayat kelas, serta departemen tagihan/pembayaran; filter ini tidak memotong isi laporan siswa yang sudah dipilih.
+Siswa aktif, nonaktif, dan alumni dapat dicari. NIS dicocokkan tepat, nama dicocokkan sebagian, dan hasil dibatasi 50 siswa per halaman dengan navigasi berikutnya/sebelumnya. Karakter `%`/`_` pada nama diperlakukan sebagai teks literal. Kelayakan akses hanya berdasarkan departemen kelas terakhir atau riwayat kelas akademik. Departemen tagihan/pembayaran saja tidak memberikan hak akses. Setelah siswa memenuhi syarat, laporan memuat seluruh departemen tanpa memotong riwayat keuangannya.
 
 ## Aturan data dan perhitungan
 
@@ -79,6 +79,7 @@ Jalankan dari root proyek dengan PHP CLI yang memakai konfigurasi lokal:
 php tests/rekappembayaran_test.php
 php tests/rekappembayaran_database_test.php
 php -d disable_functions= tests/rekappembayaran_endpoint_test.php
+php -d disable_functions= tests/rekappembayaran_privacy_test.php
 php tests/rekappembayaran_http_test.php
 ```
 
@@ -87,9 +88,10 @@ Jika PHP tidak berada di PATH, gunakan `C:\YIM\JIBAS\xampp\php\php.exe`. Overrid
 | Pengujian yang dijalankan | Hasil |
 |---|---|
 | Model, hak akses, nominal, XSS, struktur XLSX dan teks formula | 39 pemeriksaan lolos |
-| Query dengan fixture lintas departemen/tahun dan alumni | 24 pemeriksaan lolos |
+| Query dengan fixture lintas departemen/tahun dan alumni | 41 pemeriksaan lolos |
 | Endpoint asli dengan fixture terisolasi: layar, cetak, surat, Excel, pencarian | 18 pemeriksaan lolos |
-| HTTP Apache: sesi, staf, manajer, parameter dan keadaan kosong | 30 pemeriksaan lolos |
+| HTTP Apache: sesi, staf, manajer, parameter dan keadaan kosong | 109 pemeriksaan lolos |
+| Privasi dua antarmuka, pencabutan izin, alumni, ekspor dan CSRF penetapan | 101 pemeriksaan lolos |
 | PHP lint file fitur | Lolos pada PHP 8.2.30 |
 
 Fixture database menggunakan **CREATE TEMPORARY TABLE** yang hanya menutupi tabel asli pada koneksi pengujian itu. Tidak ada penulisan fixture ke tabel permanen. Akun pengujian database memerlukan izin membuat temporary table. Uji HTTP memakai sesi acak sementara yang dihapus setelah pemeriksaan, dan mengakses Apache lokal pada `http://localhost/jibas/keuangan/`.
@@ -204,7 +206,7 @@ Sesi Keuangan bernama `jbskeu`. `redirect.php` membentuk `namakeuangan`, `tingka
 |---|---|
 | `nis` | Maksimal 20 karakter; laporan memerlukan NIS tidak kosong |
 | `nama` | Maksimal 100 karakter; pencarian tanpa NIS membutuhkan minimal 3 karakter |
-| `departemen` | Maksimal 50 karakter; kosong berarti semua departemen |
+| `departemen` | Maksimal 50 karakter; kosong berarti gabungan departemen yang diizinkan (semua bagi landlord) |
 | `page` | Angka nonnegatif, maksimal 6 karakter; indeks halaman dimulai dari 0 |
 | `cari` | Kehadirannya memicu pencarian |
 
@@ -286,7 +288,7 @@ Query agregat ini hanya pembanding untuk diskon yang sudah valid. SQL `CAST` bis
 
 ## Batas yang belum boleh dianggap selesai
 
-- Basis data lokal pada verifikasi awal kosong untuk siswa/tagihan/pembayaran. Hasil 111 pemeriksaan adalah bukti model, fixture, endpoint, dan HTTP yang dijalankan, bukan bukti rekonsiliasi transaksi nyata.
+- Basis data lokal pada verifikasi awal kosong untuk siswa/tagihan/pembayaran. Hasil awal 111 pemeriksaan pada 6 Oktober, dan 308 pemeriksaan pada 7 Oktober, adalah bukti model, fixture, endpoint, dan HTTP yang dijalankan, bukan bukti rekonsiliasi transaksi nyata.
 - Snapshot read-only menjaga konsistensi pembacaan pada tabel dengan engine transaksional yang mendukungnya. Tabel MyISAM/nontransaksional tidak mendapat jaminan snapshot InnoDB.
 - Jurnal angsuran/tahun transaksi dan metadata jenis/tagihan diperiksa, tetapi keseimbangan debit/kredit `jurnaldetail` dan jurnal pendataan `besarjtt.info1` tidak diaudit lengkap oleh fitur ini.
 - Pembayaran angsuran yang tidak lagi mempunyai baris `besarjtt` tidak dapat dipetakan ke NIS oleh loader saat ini. Audit transaksi orphan global adalah pekerjaan terpisah.
@@ -308,3 +310,37 @@ Query agregat ini hanya pembanding untuk diskon yang sudah valid. SQL `CAST` bis
 7. Review `git diff --check` dan staged diff. Jangan ikutkan `include/database.config.php`, token, log, dump, atau hasil laporan berisi data sekolah. Commit/push sesuai instruksi pengguna dan riwayat repo aktual.
 
 Pemeriksaan hanya dokumentasi tidak memerlukan pengulangan seluruh test aplikasi. Namun angka hasil verifikasi tidak boleh dinaikkan atau diberi tanggal baru tanpa menjalankan pemeriksaan yang mendasarinya. Riwayat patch berikutnya sebaiknya menambahkan catatan bertanggal dan acuan commit tanpa menghapus batas pengujian sebelumnya.
+
+## Patch 7 Oktober 2026: JIBAS 36.0, Rinjani dan privasi
+
+PRD dibuat sebelum implementasi: [PRD_REKAP_PEMBAYARAN_SISWA.md](PRD_REKAP_PEMBAYARAN_SISWA.md). Baseline update provider dicatat pada commit `d056351`, termasuk Akademik Semeru dan Keuangan Rinjani KEU-36.0.1403. File provider di luar integrasi patch dipertahankan. Catatan bertanggal ini menggantikan kebijakan akses pembangunan awal yang lebih longgar.
+
+### Aturan yang wajib dipertahankan
+
+- Landlord harus mempunyai login `landlord` dan level 0; mempunyai akses penuh tanpa penetapan departemen. Level 0 dengan login lain tidak otomatis memperoleh hak rekap.
+- Manajer level 1 harus mempunyai akun login dan pegawai aktif serta baris hakakses KEUANGAN tingkat 1 dengan departemen valid. NULL, kosong dan ALL ditolak sebagai penetapan. Beberapa baris valid membentuk gabungan izin. Hak dibaca ulang dari database setiap permintaan, sehingga sesi ALL lama tidak melewati pencabutan izin.
+- Staf tidak memperoleh menu; akses langsung ke halaman, pencarian, cetak, Excel dan surat ditolak. Manajer tanpa penetapan ditolak 403. Siswa tidak ditemukan dan siswa di luar izin sama-sama menghasilkan 404 pada laporan/ekspor.
+- Siswa aktif/nonaktif/lulus boleh ditampilkan jika kelas terakhir atau riwayat kelas pernah berada di departemen manajer. Pembayaran pada departemen tersebut tidak menjadi bukti keanggotaan akademik. Jika lolos, seluruh transaksi NIS tersebut di semua departemen dan tahun buku tampil dan dapat diidentifikasi.
+- Contoh: manajer A boleh melihat siswa dengan riwayat A serta transaksi C/D; manajer B tidak boleh melihat siswa yang tidak pernah berada di B. Tidak ada penggabungan siswa hanya karena nama sama.
+
+### Pemasangan dan penetapan izin
+
+Tidak ada migrasi tabel. Field existing `jbsuser.hakakses.departemen` dipakai untuk penetapan. Login landlord, buka Pengaturan Pengguna dan pilih **Akses Departemen Rekap**. Pada klasik URL `keuangan/rekappembayaran_akses.php`; pada Rinjani `keuangan/rinjani/pengaturan/rekapsiswa.akses.php`. Pilih departemen pada baris manajer dan simpan. Pilihan kosong mencabut izin; ALL tidak diterima. POST penetapan menggunakan token CSRF sesi dan transaksi database. Akun manajer lama wajib ditetapkan sebelum memakai rekap.
+
+Pengelolaan akun Keuangan klasik dan Rinjani sekarang hanya landlord, termasuk endpoint AJAX/cetak/dialog; ini mencegah manajer mengubah peran atau departemen sendiri. Ganti password sendiri tetap mengikuti alur bawaan. Rinjani mempertahankan penetapan saat edit akun manajer tetap sebagai manajer. Setelah perubahan peran, periksa kembali penetapan. Perilaku legacy getAccess() untuk fitur keuangan lain tetap berlaku; pembatasan siswa baru khusus fitur ini.
+
+### Dua antarmuka, satu implementasi
+
+Klasik: `keuangan/laprekappembayaran_siswa_main.php`. Rinjani: `keuangan/rinjani/penerimaan/laporan/rekapsiswa.php`, ditautkan dari Penerimaan/Pelaporan. Wrapper Rinjani memakai model, query, renderer, XLSX dan kebijakan yang sama; jangan menyalin mesin hitung ke wrapper. Bootstrap memuat mainconfig dengan path absolut agar endpoint dalam direktori dalam tetap bekerja.
+
+File penting: `library/rekappembayaran_access.php` menyediakan RpResolveScope, RpEligibility dan RpSetManagerDepartment; `rekappembayaran_admin_guard.php` melindungi administrasi akun. RpSearchStudents dan RpLoadReport wajib menerima scope secara eksplisit; NULL hanya diberikan setelah validasi landlord. RpRoute membentuk URL sesuai varian, sedangkan stylesheet Rinjani menerapkan font/judul/tombol sesuai tampilan provider. Mengubah pencarian saja tidak cukup: pemeriksaan sebelum load siswa juga harus dipertahankan di semua keluaran.
+
+### Verifikasi dan batas
+
+Tanggal 7 Oktober 2026: 308 pemeriksaan lolos (39 model, 41 database, 18 endpoint, 101 privasi kedua antarmuka, 109 HTTP Apache). Fixture menggunakan tabel temporer per koneksi; tidak mengubah hak akses atau transaksi sekolah. Pratinjau Edge headless atas frame utama dan laporan Rinjani diperiksa; dropdown dibatasi dan data lintas departemen tampil. Excel diuji sebagai paket XML XLSX, belum dibuka manual dalam aplikasi Excel; hasil cetak kertas belum diperiksa.
+
+Database lokal masih kosong pada tabel siswa/tagihan/pembayaran. Tabel transaksi utama yang diperiksa menggunakan InnoDB, mendukung snapshot konsisten. Data produksi, variasi skema sekolah, daftar riwayat kelas yang tidak lengkap, kop dan format tanda tangan harus diverifikasi sebelum penggunaan operasional. Jika riwayat akademik hilang, sistem menolak akses yang tidak dapat dibuktikan; jangan memperluasnya memakai riwayat pembayaran.
+
+Lint baseline provider menemukan 13 file pustaka Semeru yang gagal pada lingkungan PHP 8.2: pustaka PHPExcel lama dengan akses offset kurung kurawal dan jpgraph_utils terkait eval yang dinonaktifkan. Komponen tersebut tidak dipanggil oleh rekap; XLSX rekap memakai ZipArchive langsung. Ini adalah keterbatasan provider di luar patch, bukan klaim bahwa seluruh modul JIBAS kompatibel PHP 8.2. Jangan mengatasi ekspor rekap dengan mengalihkannya ke PHPExcel lama.
+
+Untuk rollback, pulihkan seluruh integrasi akses dan endpoint kedua varian secara konsisten. Mengembalikan hanya guard atau query dapat membuka privasi. Penetapan departemen tersimpan di database dan tidak otomatis dihapus oleh rollback Git. Commit/push dilakukan setelah perubahan diverifikasi; token dan konfigurasi database tidak disimpan dalam dokumentasi/source.

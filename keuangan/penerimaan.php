@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . '/library/rekappembayaran_model.php';
+if (session_status() !== PHP_SESSION_ACTIVE) { session_name('jbskeu'); session_start(); }
+?>
 <?
 /**[N]**
  * JIBAS Education Community
@@ -117,7 +121,9 @@
         <a href="lapbayarcalon_nunggak_main.php">Pembayaran Calon Siswa Yang Menunggak</a><br>
         <a href="laprekap_main.php">Rekapitulasi Penerimaan</a><br>
         <a href="laprekapsiswa_main.php">Rekapitulasi Tunggakan Siswa</a><br>
+        <?php if (RpCanAccess($_SESSION)): ?>
         <a href="laprekappembayaran_siswa_main.php">Rekap Pembayaran Siswa</a><br>
+        <?php endif; ?>
         <a href="lappenerimaanlain_main.php">Penerimaan Lain</a><br>
         <a href="jurnalpenerimaan_main.php">Jurnal Penerimaan</a><br />
         

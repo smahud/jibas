@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/rekappembayaran_access.php';
 
 function RpRows($db, $sql, $types = '', $params = array())
 {
@@ -18,13 +19,16 @@ function RpRows($db, $sql, $types = '', $params = array())
     }
 }
 
-function RpDepartments($db)
+function RpDepartments($db, $scope = null)
 {
     // Departemen nonaktif tetap bisa dicari untuk siswa/alumni dan riwayat lama.
-    return RpRows($db, 'SELECT departemen FROM jbsakad.departemen ORDER BY urutan, departemen');
+    if ($scope === null) return RpRows($db, 'SELECT departemen FROM jbsakad.departemen ORDER BY urutan, departemen');
+    if (!$scope) throw new RpAccessDenied('Departemen rekap tidak tersedia.');
+    return RpRows($db, 'SELECT departemen FROM jbsakad.departemen WHERE departemen IN ('
+        . implode(',', array_fill(0,count($scope),'?')) . ') ORDER BY urutan,departemen', str_repeat('s', count($scope)), $scope);
 }
 
-function RpSearchStudents($db, $nis, $name, $department, $page)
+function RpSearchStudents($db, $nis, $name, $department, $page, $scope)
 {
     if ($nis === '' && mb_strlen($name, 'UTF-8') < 3)
         throw new InvalidArgumentException('Isi NIS lengkap atau nama minimal 3 karakter.');
@@ -42,35 +46,20 @@ function RpSearchStudents($db, $nis, $name, $department, $page)
         $sql .= " AND s.nama LIKE ? ESCAPE '='";
         $params[] = '%' . str_replace(array('=', '%', '_'), array('==', '=%', '=_'), $name) . '%';
     }
-    if ($department !== '') {
-        $sql .= ' AND (t.departemen = ? OR EXISTS (
-            SELECT 1 FROM jbsakad.riwayatkelassiswa r
-            JOIN jbsakad.kelas rk ON rk.replid=r.idkelas
-            JOIN jbsakad.tingkat rt ON rt.replid=rk.idtingkat
-            WHERE r.nis=s.nis AND rt.departemen=?) OR EXISTS (
-            SELECT 1 FROM jbsfina.besarjtt b
-            LEFT JOIN jbsfina.tahunbuku tb ON b.info2=CAST(tb.replid AS CHAR)
-            LEFT JOIN jbsfina.datapenerimaan d ON d.replid=b.idpenerimaan
-            WHERE b.nis=s.nis AND COALESCE(NULLIF(tb.departemen,\'\'),d.departemen)=?) OR EXISTS (
-            SELECT 1 FROM jbsfina.penerimaaniuran p
-            LEFT JOIN jbsfina.jurnal j ON j.replid=p.idjurnal
-            LEFT JOIN jbsfina.tahunbuku tb ON tb.replid=j.idtahunbuku
-            LEFT JOIN jbsfina.datapenerimaan d ON d.replid=p.idpenerimaan
-            WHERE p.nis=s.nis AND COALESCE(NULLIF(tb.departemen,\'\'),d.departemen)=?))';
-        for ($i = 0; $i < 4; $i++) $params[] = $department;
-    }
+    $effectiveScope = RpValidateDepartment($scope, $department);
+    $sql .= ' AND ' . RpEligibility($effectiveScope, $params);
     $sql .= ' ORDER BY s.nama, s.nis LIMIT 51 OFFSET ' . ((int)$page * 50);
     return RpRows($db, $sql, str_repeat('s', count($params)), $params);
 }
 
-function RpLoadReport($db, $nis)
+function RpLoadReport($db, $nis, $scope)
 {
     // Ambil satu snapshot untuk seluruh query agar edit cicilan bersamaan tidak
     // menghasilkan campuran data pada ringkasan, detail, atau keputusan surat.
     if (!mysqli_begin_transaction($db, MYSQLI_TRANS_START_READ_ONLY | MYSQLI_TRANS_START_WITH_CONSISTENT_SNAPSHOT))
         throw new RuntimeException('Snapshot laporan tidak dapat dimulai.');
     try {
-        $report = RpReadReport($db, $nis);
+        $report = RpReadReport($db, $nis, $scope);
         if (!mysqli_commit($db)) throw new RuntimeException('Snapshot laporan tidak dapat diselesaikan.');
         return $report;
     } catch (Throwable $e) {
@@ -79,11 +68,13 @@ function RpLoadReport($db, $nis)
     }
 }
 
-function RpReadReport($db, $nis)
+function RpReadReport($db, $nis, $scope)
 {
+    $params = array($nis);
+    $eligible = RpEligibility($scope, $params);
     $students = RpRows($db, 'SELECT s.nis, s.nama, s.aktif, s.alumni, k.kelas, t.tingkat, t.departemen
         FROM jbsakad.siswa s LEFT JOIN jbsakad.kelas k ON k.replid=s.idkelas
-        LEFT JOIN jbsakad.tingkat t ON t.replid=k.idtingkat WHERE s.nis=?', 's', array($nis));
+        LEFT JOIN jbsakad.tingkat t ON t.replid=k.idtingkat WHERE s.nis=? AND ' . $eligible, str_repeat('s',count($params)), $params);
     if (!$students) return null;
     // Tidak JOIN penerimaanjtt: tagihan tanpa pembayaran harus tetap muncul.
     // Tahun tagihan besarjtt.info2 tetap dipakai saat cicilan dibayar di tahun buku berikutnya.
